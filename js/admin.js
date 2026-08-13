@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPreview();
   initReset();
   initLogout();
+  initExportImport();
 });
 
 function loadAdminData() {
@@ -29,8 +30,60 @@ function loadAdminData() {
 }
 
 function saveAll() {
-  localStorage.setItem('portfolio_data', JSON.stringify(adminData));
-  showAdminToast('✓ تم الحفظ بنجاح', 'success');
+  try {
+    localStorage.setItem('portfolio_data', JSON.stringify(adminData));
+    showAdminToast('✓ تم الحفظ بنجاح', 'success');
+  } catch (e) {
+    console.error('Save failed', e);
+    showAdminToast(
+      (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'))
+        ? '⚠️ مساحة المتصفح ممتلئة — ارفع صور أصغر أو احذف مشاريع'
+        : '⚠️ لم يتم الحفظ — حاول مرة أخرى',
+      'error'
+    );
+  }
+}
+
+// Compress uploaded images before storing so localStorage never overflows.
+function compressImage(file, maxDim, quality) {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) return resolve(null);
+    // Keep vector/animated formats as-is to avoid flattening them
+    if (/(svg|gif)/.test(file.type)) {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => resolve(null);
+      r.readAsDataURL(file);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / img.width, maxDim / img.height);
+        const cw = Math.max(1, Math.round(img.width * scale));
+        const ch = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = cw; canvas.height = ch;
+        canvas.getContext('2d').drawImage(img, 0, 0, cw, ch);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(null);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+function readFileData(file) {
+  return new Promise((resolve) => {
+    if (!file) return resolve(null);
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => resolve(null);
+    r.readAsDataURL(file);
+  });
 }
 
 // ── Login ─────────────────────────────────────────────────
@@ -133,17 +186,15 @@ function renderCurrentImage(previewId, src) {
 function setupImageUpload(inputId, previewId, callback) {
   const input = document.getElementById(inputId);
   if (!input) return;
-  input.addEventListener('change', function() {
+  input.addEventListener('change', async function() {
     const file = this.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64 = e.target.result;
-      callback(base64);
-      renderCurrentImage(previewId, base64);
+    const dataUrl = (await compressImage(file, 1600, 0.8)) || (await readFileData(file));
+    if (dataUrl) {
+      callback(dataUrl);
+      renderCurrentImage(previewId, dataUrl);
       showAdminToast('✓ تم رفع الصورة، اضغط حفظ لتأكيد التغييرات');
-    };
-    reader.readAsDataURL(file);
+    }
   });
 }
 
@@ -388,38 +439,35 @@ function renderMediaGallery(media, projIdx) {
     }).join('') + `</div>`;
 }
 
-window.handleProjectCover = function(projIdx, input) {
+window.handleProjectCover = async function(projIdx, input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    adminData.projects[projIdx].cover = e.target.result;
-    const preview = document.getElementById(`proj-cover-preview-${projIdx}`);
-    if (preview) preview.innerHTML = `<img src="${e.target.result}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">`;
-    showAdminToast('✓ تم رفع صورة الغلاف');
-  };
-  reader.readAsDataURL(file);
+  const dataUrl = (await compressImage(file, 1600, 0.8)) || (await readFileData(file));
+  if (!dataUrl) return;
+  adminData.projects[projIdx].cover = dataUrl;
+  const preview = document.getElementById(`proj-cover-preview-${projIdx}`);
+  if (preview) preview.innerHTML = `<img src="${dataUrl}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">`;
+  showAdminToast('✓ تم رفع صورة الغلاف');
 };
 
-window.handleProjectMedia = function(projIdx, input) {
+window.handleProjectMedia = async function(projIdx, input) {
   const files = Array.from(input.files);
   if (!files.length) return;
   if (!adminData.projects[projIdx].media) adminData.projects[projIdx].media = [];
   let loaded = 0;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const isVideo = file.type.startsWith('video/');
-      adminData.projects[projIdx].media.push({ src: e.target.result, type: isVideo ? 'video' : 'image', name: file.name });
-      loaded++;
-      if (loaded === files.length) {
-        const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
-        if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
-        showAdminToast(`✓ تم رفع ${files.length} ملف`);
-      }
-    };
-    reader.readAsDataURL(file);
-  });
+  for (const file of files) {
+    const isVideo = file.type.startsWith('video/');
+    const dataSrc = isVideo ? (await readFileData(file)) : ((await compressImage(file, 1280, 0.78)) || (await readFileData(file)));
+    if (dataSrc) {
+      adminData.projects[projIdx].media.push({ src: dataSrc, type: isVideo ? 'video' : 'image', name: file.name });
+    }
+    loaded++;
+    if (loaded === files.length) {
+      const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
+      if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
+      showAdminToast(`✓ تم رفع ${files.length} ملف`);
+    }
+  }
 };
 
 window.removeMedia = function(projIdx, mediaIdx) {
@@ -562,6 +610,52 @@ function initLogout() {
     document.getElementById('login-screen').classList.remove('hidden');
     document.getElementById('login-password').value = '';
   });
+}
+
+// ── Export / Import ──────────────────────────────────────
+function initExportImport() {
+  const exportBtn = document.getElementById('btn-export');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(adminData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'portfolio_data.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      showAdminToast('✓ تم تنزيل بيانات الموقع');
+    });
+  }
+
+  const importInput = document.getElementById('import-data');
+  if (importInput) {
+    importInput.addEventListener('change', () => {
+      const file = importInput.files[0];
+      importInput.value = '';
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed || typeof parsed !== 'object') throw new Error('invalid');
+          if (!parsed.projects) parsed.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
+          if (typeof normalizeProjects === 'function') {
+            parsed.projects = normalizeProjects(parsed.projects);
+          }
+          adminData = parsed;
+          saveAll();
+          populateAllForms();
+          showAdminToast('✓ تم استيراد البيانات وحفظها بنجاح', 'success');
+        } catch (err) {
+          console.error('Import failed', err);
+          showAdminToast('⚠️ الملف غير صالح — اختر ملف JSON صحيح', 'error');
+        }
+      };
+      reader.onerror = () => showAdminToast('⚠️ تعذر قراءة الملف', 'error');
+      reader.readAsText(file);
+    });
+  }
 }
 
 // ── Toast ─────────────────────────────────────────────────

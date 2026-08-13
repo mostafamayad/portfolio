@@ -42,6 +42,9 @@
 
         <div class="admin-sidebar-footer">
           <button class="admin-action-btn preview" id="btn-preview"><i class="fas fa-eye"></i> معاينة الموقع</button>
+          <button class="admin-action-btn export" id="btn-export"><i class="fas fa-download"></i> تنزيل البيانات (JSON)</button>
+          <button class="admin-action-btn import" id="btn-import" onclick="document.getElementById('import-data').click()"><i class="fas fa-upload"></i> استيراد البيانات (JSON)</button>
+          <input type="file" id="import-data" accept="application/json,.json" style="display:none">
           <button class="admin-action-btn reset" id="btn-reset"><i class="fas fa-undo"></i> استعادة الأصلي</button>
           <button class="admin-action-btn logout" id="btn-logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
         </div>
