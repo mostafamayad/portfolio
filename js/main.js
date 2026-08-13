@@ -220,7 +220,7 @@ function initTopBar() {
   if (bgMusic) {
     // metadata only → never download the full file until actually played
     bgMusic.preload = 'metadata';
-    bgMusic.volume = 0.2; // soft background music (20%)
+    bgMusic.volume = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ? 0.1 : 0.2;
 
     const resume = () => {
       if (audioState.currentTime > 0) {
