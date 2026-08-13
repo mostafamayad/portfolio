@@ -201,7 +201,22 @@ function collectFormData(section) {
       break;
 
     case 'projects':
-      // Projects are saved inline via individual save buttons
+      // Collect every rendered project card so the main "حفظ التغييرات"
+      // button persists all project fields (cover/media already mutate adminData).
+      adminData.projects.forEach((proj, i) => {
+        proj.title       = getVal(panel, `proj-title-${i}`);
+        const catEl   = panel.querySelector(`#proj-cat-${i}`);
+        if (catEl) proj.category = catEl.value;
+        proj.year        = getVal(panel, `proj-year-${i}`);
+        proj.description = getVal(panel, `proj-desc-${i}`);
+        proj.client      = getVal(panel, `proj-client-${i}`);
+        proj.services    = strToList(getVal(panel, `proj-services-${i}`));
+        proj.tools       = strToList(getVal(panel, `proj-tools-${i}`));
+        const layoutEl   = panel.querySelector(`#proj-layout-${i}`);
+        if (layoutEl) proj.layout = layoutEl.value || 'auto';
+        const featEl     = panel.querySelector(`#proj-featured-${i}`);
+        proj.featured    = featEl ? featEl.checked : !!proj.featured;
+      });
       break;
   }
 }
