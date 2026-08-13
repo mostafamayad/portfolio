@@ -180,7 +180,26 @@ function initTopBar() {
     });
   }
   if (themeToggle) {
-    themeToggle.addEventListener('click', () => themeToggle.classList.toggle('on'));
+    themeToggle.addEventListener('click', () => {
+      themeToggle.classList.toggle('on');
+      document.body.classList.toggle('light-mode');
+      
+      if (document.body.classList.contains('light-mode')) {
+        document.documentElement.style.setProperty('--bg-primary', '#f4f4f5');
+        document.documentElement.style.setProperty('--bg-secondary', '#ffffff');
+        document.documentElement.style.setProperty('--bg-card', 'rgba(0,0,0,0.05)');
+        document.documentElement.style.setProperty('--text-primary', '#0f172a');
+        document.documentElement.style.setProperty('--text-secondary', '#334155');
+        document.documentElement.style.setProperty('--text-muted', '#64748b');
+      } else {
+        document.documentElement.style.setProperty('--bg-primary', '#080810');
+        document.documentElement.style.setProperty('--bg-secondary', '#0d0d1a');
+        document.documentElement.style.setProperty('--bg-card', 'rgba(255,255,255,0.03)');
+        document.documentElement.style.setProperty('--text-primary', '#ffffff');
+        document.documentElement.style.setProperty('--text-secondary', 'rgba(255,255,255,0.85)');
+        document.documentElement.style.setProperty('--text-muted', 'rgba(255,255,255,0.55)');
+      }
+    });
   }
 }
 
@@ -279,6 +298,20 @@ function buildPage() {
     el.style.display = d.available ? 'flex' : 'none';
   });
 
+  // Load Custom Images
+  if (d.profileImage) {
+    document.querySelectorAll('.hero-photo, .right-profile-img').forEach(img => {
+      img.src = d.profileImage;
+    });
+  }
+  if (d.logoImage) {
+    document.querySelectorAll('.sidebar-logo-img, .hero-badge-logo-img, .loader-logo-img').forEach(img => {
+      img.src = d.logoImage;
+    });
+    // Hide fallback if logo exists
+    document.querySelectorAll('.logo-fallback-text').forEach(el => el.style.display = 'none');
+  }
+
   // Socials
   document.querySelectorAll('[data-socials]').forEach(container => {
     container.innerHTML = DATA.socials.map(s => `
@@ -369,11 +402,12 @@ function buildPage() {
   // Right panel mini projects
   document.querySelectorAll('[data-mini-projects]').forEach(container => {
     container.innerHTML = DATA.projects.slice(0, 3).map(p => `
-      <div class="panel-proj-item" id="mini-proj-${p.id}">
-        <div class="panel-proj-img-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.1))">
-          ${getProjectEmoji(p.category)}
-        </div>
-        <div class="panel-proj-info">
+      <div class="panel-proj-item" id="mini-proj-${p.id}" onclick="openLightbox(${p.id})">
+        ${p.cover 
+          ? `<img src="${p.cover}" class="panel-proj-img" style="width:50px;height:50px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border);flex-shrink:0;">`
+          : `<div class="panel-proj-img-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.1));width:50px;height:50px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:1px solid var(--border);flex-shrink:0;">${getProjectEmoji(p.category)}</div>`
+        }
+        <div class="panel-proj-info" style="cursor:pointer;">
           <div class="panel-proj-cat">${p.category}</div>
           <div class="panel-proj-title">${p.title}</div>
         </div>
@@ -412,9 +446,12 @@ function buildProjects(filter = 'all') {
 
     container.innerHTML = filtered.map(p => `
       <div class="work-card reveal" data-category="${p.category}" id="work-${p.id}">
-        <div class="work-card-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.1));">
-          ${getProjectEmoji(p.category)}
-        </div>
+        ${p.cover
+          ? `<img src="${p.cover}" style="width:100%;height:220px;object-fit:cover;border-radius:var(--radius-md) var(--radius-md) 0 0;" alt="${p.title}">`
+          : `<div class="work-card-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.1));">
+              ${getProjectEmoji(p.category)}
+            </div>`
+        }
         <div class="work-card-info">
           <div>
             <div class="work-cat">${p.category}</div>
@@ -423,13 +460,68 @@ function buildProjects(filter = 'all') {
           <div class="work-year">${p.year}</div>
         </div>
         <div class="work-card-hover">
-          <a href="${p.link}" class="work-view-btn" target="_blank">VIEW PROJECT</a>
+          <button class="work-view-btn" onclick="openLightbox(${p.id})">VIEW PROJECT</button>
         </div>
       </div>
     `).join('');
     initRevealAnimations();
   });
 }
+
+// ── Lightbox Logic ─────────────────────────────────────────
+window.openLightbox = function(id) {
+  const project = DATA.projects.find(p => p.id == id);
+  if (!project) return;
+  
+  let lightbox = document.getElementById('project-lightbox');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.id = 'project-lightbox';
+    lightbox.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+    document.body.appendChild(lightbox);
+  }
+  
+  let mediaHtml = '';
+  if (project.media && project.media.length > 0) {
+    mediaHtml = project.media.map(m => {
+      if (m.type === 'video') {
+        return `<video src="${m.src}" controls autoplay style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;"></video>`;
+      } else {
+        return `<img src="${m.src}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;object-fit:contain;">`;
+      }
+    }).join('');
+  } else if (project.cover) {
+    mediaHtml = `<img src="${project.cover}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;object-fit:contain;">`;
+  } else {
+    mediaHtml = `<div style="padding:3rem;background:var(--bg-card);border-radius:12px;font-family:var(--font-mono);color:var(--text-muted)">No media uploaded yet.</div>`;
+  }
+
+  lightbox.innerHTML = `
+    <button onclick="closeLightbox()" style="position:absolute;top:2rem;right:2rem;background:transparent;border:none;color:white;font-size:2rem;cursor:pointer;z-index:10000;">&times;</button>
+    <div style="width:100%;max-width:800px;text-align:center;position:relative;z-index:10000;display:flex;flex-direction:column;align-items:center;">
+      ${mediaHtml}
+      <h2 style="margin-top:1rem;color:var(--purple-light);font-family:var(--font-display);font-size:1.5rem;">${project.title}</h2>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:0.5rem;max-width:600px;">${project.description}</p>
+      <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono)">${project.category.toUpperCase()} — ${project.year}</div>
+    </div>
+  `;
+  
+  lightbox.style.pointerEvents = 'auto';
+  requestAnimationFrame(() => {
+    lightbox.style.opacity = '1';
+  });
+};
+
+window.closeLightbox = function() {
+  const lightbox = document.getElementById('project-lightbox');
+  if (lightbox) {
+    lightbox.style.opacity = '0';
+    lightbox.style.pointerEvents = 'none';
+    setTimeout(() => {
+      lightbox.innerHTML = ''; // clear videos so they stop playing
+    }, 300);
+  }
+};
 
 function buildBlog() {
   const posts = [
