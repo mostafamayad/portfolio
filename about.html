@@ -22,7 +22,8 @@
   <!-- Loading -->
   <div id="loading-screen">
     <div class="loader-content">
-      <div class="loader-logo">MA</div>
+      <img src="assets/images/logo.png" class="loader-logo-img" alt="MA Logo" onerror="this.style.display='none';document.querySelector('.loader-logo-text').style.display='block'">
+      <div class="loader-logo-text" style="display:none">MA</div>
       <div class="loader-bar"><div class="loader-progress"></div></div>
       <div class="loader-text">LOADING...</div>
     </div>
@@ -32,7 +33,10 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div class="logo-mark"><span data-field="initials">MA</span></div>
+        <div class="logo-mark">
+          <img src="assets/images/logo.png" alt="Logo" class="sidebar-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="logo-fallback-text" style="display:none" data-field="initials">MA</span>
+        </div>
         <div class="logo-text">
           <div class="logo-name"><span data-field="firstname">Mostafa</span><br><span data-field="lastname">Ayad</span></div>
           <div class="logo-sub">Graphic Designer<br>&amp; Visual Creator</div>
@@ -50,10 +54,7 @@
         </ul>
       </nav>
       <div class="sidebar-bottom">
-        <div class="available-badge" data-field="available">
-          <span class="available-dot"></span>
-          <span>Available for new projects</span>
-        </div>
+        <div class="available-badge"><span class="available-dot"></span><span>Available for work</span></div>
         <a href="contact.html" class="hire-me-btn"><span>HIRE ME</span><span>→</span></a>
         <div class="sidebar-socials" data-socials></div>
       </div>
