@@ -504,6 +504,13 @@ function buildPage() {
       </div>
     `;
     }).join('');
+    container.querySelectorAll('.cat-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const key = catKey[card.id.replace('cat-', '')];
+        const proj = DATA.projects.find(p => p.category === key);
+        navigateToPage(proj ? `project.html?id=${proj.id}` : 'works.html');
+      });
+    });
   });
 
   // Projects (works page)
