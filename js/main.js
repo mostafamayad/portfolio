@@ -486,11 +486,15 @@ function buildPage() {
 
   // Categories
   document.querySelectorAll('[data-categories]').forEach(container => {
-    container.innerHTML = DATA.categories.map(cat => `
+    const catKey = {1:'branding', 2:'social', 3:'motion', 4:'web', 5:'video', 6:'it'};
+    container.innerHTML = DATA.categories.map(cat => {
+      const cover = (DATA.projects.find(p => p.category === catKey[cat.id] && p.cover) || {}).cover || '';
+      const media = cover
+        ? `<img src="${cover}" alt="${cat.title}" class="cat-card-img" loading="lazy">`
+        : `<div class="cat-card-placeholder" style="background: linear-gradient(135deg, ${cat.color}22, ${cat.color}11);">${getCatEmoji(cat.id)}</div>`;
+      return `
       <div class="cat-card shimmer" style="--cat-color: ${cat.color}" id="cat-${cat.id}">
-        <div class="cat-card-placeholder" style="background: linear-gradient(135deg, ${cat.color}22, ${cat.color}11);">
-          ${getCatEmoji(cat.id)}
-        </div>
+        ${media}
         <div class="cat-card-overlay">
           <div class="cat-num">${cat.num}</div>
           <div class="cat-name">${cat.title}</div>
@@ -498,7 +502,8 @@ function buildPage() {
         </div>
         <div class="cat-arrow">→</div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   });
 
   // Projects (works page)
