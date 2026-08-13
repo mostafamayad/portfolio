@@ -611,6 +611,13 @@ function buildProjects(filter = 'all') {
       </div>
     `).join('');
     initRevealAnimations();
+    container.querySelectorAll('.work-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        const btn = card.querySelector('.work-view-btn');
+        if (btn && btn.getAttribute('href')) navigateToPage(btn.getAttribute('href'));
+      });
+    });
   });
 }
 

@@ -447,7 +447,8 @@ window.handleProjectCover = async function(projIdx, input) {
   adminData.projects[projIdx].cover = dataUrl;
   const preview = document.getElementById(`proj-cover-preview-${projIdx}`);
   if (preview) preview.innerHTML = `<img src="${dataUrl}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">`;
-  showAdminToast('✓ تم رفع صورة الغلاف');
+  saveAll();
+  showAdminToast('✓ تم رفع وحفظ صورة الغلاف');
 };
 
 window.handleProjectMedia = async function(projIdx, input) {
@@ -465,7 +466,8 @@ window.handleProjectMedia = async function(projIdx, input) {
     if (loaded === files.length) {
       const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
       if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
-      showAdminToast(`✓ تم رفع ${files.length} ملف`);
+      saveAll();
+      showAdminToast(`✓ تم رفع وحفظ ${files.length} ملف`);
     }
   }
 };
@@ -474,6 +476,7 @@ window.removeMedia = function(projIdx, mediaIdx) {
   adminData.projects[projIdx].media.splice(mediaIdx, 1);
   const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
   if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
+  saveAll();
 };
 
 window.saveProject = function(projIdx) {
