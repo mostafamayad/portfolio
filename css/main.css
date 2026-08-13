@@ -2,7 +2,7 @@
    PORTFOLIO — MAIN CSS DESIGN SYSTEM
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 /* ── CSS Variables ─────────────────────────────────────── */
 :root {
@@ -30,8 +30,8 @@
   --sidebar-w:     220px;
   --right-w:       220px;
 
-  --font-main:     'Inter', sans-serif;
-  --font-display:  'Space Grotesk', sans-serif;
+  --font-main:     'Plus Jakarta Sans', 'Cairo', sans-serif;
+  --font-display:  'Outfit', 'Cairo', sans-serif;
   --font-mono:     'Space Mono', monospace;
 
   --radius-sm:     8px;
@@ -1565,10 +1565,33 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 }
 
 @media (max-width: 600px) {
-  .hero-headline { font-size: 1.8rem; }
+  body { cursor: auto; }
+  .cursor, .cursor-follower { display: none !important; }
+  
+  .hero-headline { font-size: 2rem; text-align: center; }
+  .hero-bio { text-align: center; margin: 0 auto 2rem; }
+  .hero-buttons { justify-content: center; }
+  .hero-section { padding: 2rem 1.5rem; min-height: calc(100vh - 100px); }
+  
   .page-wrapper { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; bottom: 0; left: 0; right: 0; height: auto; flex-direction: row; border-right: none; border-top: 1px solid var(--border); padding: 0.75rem 1rem; z-index: 200; }
+  .sidebar { 
+    position: fixed; bottom: 0; left: 0; right: 0; height: auto; 
+    flex-direction: row; border-right: none; border-top: 1px solid var(--border); 
+    padding: 0.5rem 0.5rem; z-index: 200; 
+    background: rgba(13,13,26,0.98); 
+  }
   .sidebar-logo, .sidebar-bottom { display: none; }
-  .sidebar-nav ul { flex-direction: row; justify-content: space-around; }
-  .main-content { padding-bottom: 80px; }
+  .sidebar-nav ul { flex-direction: row; justify-content: space-between; width: 100%; }
+  .nav-item a { padding: 0.5rem; }
+  
+  .main-content { padding-bottom: 70px; }
+  .top-bar { padding: 1rem 1.5rem; }
+  
+  .page-title { font-size: 2.2rem; }
+  .page-hero { padding: 2.5rem 1.5rem 1.5rem; }
+  .about-grid, .contact-section, .works-section, .services-section, .blog-section { padding: 1.5rem; }
+  
+  .stats-bar { grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1.5rem; }
+  .timeline { padding-left: 1rem; }
+  .timeline-dot { left: -1.4rem; }
 }

@@ -144,13 +144,40 @@ function initNavigation() {
   });
 }
 
-// ── Top Bar ──────────────────────────────────────────────
+// ── Top Bar & Audio ──────────────────────────────────────────────
+let audioInitialized = false;
 function initTopBar() {
   const soundToggle = document.querySelector('.toggle-switch[data-type="sound"]');
   const themeToggle = document.querySelector('.toggle-switch[data-type="theme"]');
+  const bgMusic = document.getElementById('bg-music');
+
+  if (bgMusic) bgMusic.volume = 0.3;
+
+  // Autoplay on first user interaction
+  const playAudio = () => {
+    if (!audioInitialized && soundToggle && soundToggle.classList.contains('on') && bgMusic) {
+      bgMusic.play().then(() => {
+        audioInitialized = true;
+      }).catch(e => console.log('Autoplay prevented by browser'));
+    }
+  };
+
+  document.addEventListener('click', playAudio, { once: true });
+  document.addEventListener('scroll', playAudio, { once: true });
+  document.addEventListener('touchstart', playAudio, { once: true });
 
   if (soundToggle) {
-    soundToggle.addEventListener('click', () => soundToggle.classList.toggle('on'));
+    soundToggle.addEventListener('click', () => {
+      soundToggle.classList.toggle('on');
+      if (bgMusic) {
+        if (soundToggle.classList.contains('on')) {
+          bgMusic.play().catch(e => console.log(e));
+          audioInitialized = true;
+        } else {
+          bgMusic.pause();
+        }
+      }
+    });
   }
   if (themeToggle) {
     themeToggle.addEventListener('click', () => themeToggle.classList.toggle('on'));
