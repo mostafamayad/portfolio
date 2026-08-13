@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project | Mostafa Ayad</title>
+  <meta name="description" content="Project details — Mostafa Ayad portfolio">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <canvas id="particles-canvas"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div id="scroll-progress"></div>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+  <div id="loading-screen">
+    <div class="loader-content">
+      <img src="assets/images/logo.png" class="loader-logo-img" alt="MA Logo" onerror="this.style.display='none';document.querySelector('.loader-logo-text').style.display='block'">
+      <div class="loader-logo-text" style="display:none">MA</div>
+      <div class="loader-bar"><div class="loader-progress"></div></div>
+      <div class="loader-text">LOADING...</div>
+    </div>
+  </div>
+  <div class="page-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">
+          <img src="assets/images/logo.png" alt="Logo" class="sidebar-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="logo-fallback-text" style="display:none" data-field="initials">MA</span>
+        </div>
+        <div class="logo-text">
+          <div class="logo-name"><span data-field="firstname">Mostafa</span><br><span data-field="lastname">Ayad</span></div>
+          <div class="logo-sub">Graphic Designer<br>&amp; Visual Creator</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item"><a href="index.html" id="nav-home"><span class="nav-icon"><i class="fas fa-home"></i></span><span class="nav-label">HOME</span><span class="nav-num">01</span></a></li>
+          <li class="nav-item"><a href="about.html" id="nav-about"><span class="nav-icon"><i class="fas fa-user"></i></span><span class="nav-label">ABOUT</span><span class="nav-num">02</span></a></li>
+          <li class="nav-item"><a href="works.html" id="nav-works"><span class="nav-icon"><i class="fas fa-th"></i></span><span class="nav-label">WORKS</span><span class="nav-num">03</span></a></li>
+          <li class="nav-item"><a href="experience.html" id="nav-experience"><span class="nav-icon"><i class="fas fa-briefcase"></i></span><span class="nav-label">EXPERIENCE</span><span class="nav-num">04</span></a></li>
+          <li class="nav-item"><a href="services.html" id="nav-services"><span class="nav-icon"><i class="fas fa-magic"></i></span><span class="nav-label">SERVICES</span><span class="nav-num">05</span></a></li>
+          <li class="nav-item"><a href="blog.html" id="nav-blog"><span class="nav-icon"><i class="fas fa-pen"></i></span><span class="nav-label">BLOG</span><span class="nav-num">06</span></a></li>
+          <li class="nav-item"><a href="contact.html" id="nav-contact"><span class="nav-icon"><i class="fas fa-envelope"></i></span><span class="nav-label">CONTACT</span><span class="nav-num">07</span></a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="available-badge"><span class="available-dot"></span><span>Available for work</span></div>
+        <a href="contact.html" class="hire-me-btn"><span>HIRE ME</span><span>→</span></a>
+        <div class="sidebar-socials" data-socials></div>
+      </div>
+    </aside>
+    <!-- MAIN -->
+    <main class="main-content">
+      <div class="top-bar">
+        <div class="top-bar-left"><span class="status-dot"></span><span>Available for new projects</span></div>
+        <div class="top-bar-right">
+          <div class="sound-toggle"><span>SOUND</span><div class="toggle-switch on" data-type="sound"></div><span>ON</span></div>
+          <div class="theme-toggle"><span>THEME</span><div class="toggle-switch" data-type="theme"></div></div>
+          <button class="menu-btn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+        </div>
+      </div>
+      <!-- PAGE CONTENT (built dynamically by js/project.js) -->
+      <div id="project-page"></div>
+    </main>
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+      <div class="quote-card glass-card">
+        <span class="quote-icon">&ldquo;</span>
+        <p class="quote-text" data-field="quote">Great design is not just what it looks like, it's how it works.</p>
+      </div>
+      <div class="vibe-card glass-card">
+        <div class="vibe-label">CURRENT VIBE</div>
+        <div class="vibe-status"><span data-field="vibe">Creating</span><span class="vibe-cursor"></span></div>
+        <div class="focus-mode"><span class="focus-dot"></span> Focus Mode</div>
+      </div>
+      <div class="now-playing-card glass-card">
+        <div class="np-label">NOW PLAYING</div>
+        <div class="np-content">
+          <div class="np-thumb">🎵</div>
+          <div class="np-info"><div class="np-title" data-field="np-title">Cyberpunk</div><div class="np-artist" data-field="np-artist">Eternal Night</div></div>
+          <button class="np-play" aria-label="Play"><i class="fas fa-play"></i></button>
+        </div>
+        <div class="np-waveform"><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div></div>
+      </div>
+      <div class="panel-projects" data-mini-projects></div>
+    </aside>
+  </div>
+  <div class="toast-container"></div>
+  <script src="js/data.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/project.js"></script>
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="assets/audio/bg.mp3" type="audio/mpeg">
+  </audio>
+</body>
+</html>

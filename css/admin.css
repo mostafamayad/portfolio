@@ -431,3 +431,25 @@ input, textarea, select {
   .form-row { grid-template-columns: 1fr; }
 }
 
+/* Featured toggle */
+.featured-row { margin-bottom: 1.25rem; }
+.featured-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.featured-check:hover { border-color: var(--purple); color: var(--text); }
+.featured-check input {
+  width: 16px; height: 16px;
+  accent-color: var(--purple);
+  cursor: pointer;
+}
+.featured-check input:checked + span { color: var(--gold); }
+

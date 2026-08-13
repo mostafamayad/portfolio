@@ -11,24 +11,55 @@ document.addEventListener('DOMContentLoaded', () => {
   initTopBar();
   initCounters();
   initSpotlight();
+  initPageTransitions();
   buildPage();
 });
 
-// ── Loading Screen ───────────────────────────────────────
+// Session keys kept inside a single tab session so the site behaves
+// like one continuous session instead of restarting on every page.
+const CV_AUDIO_KEY   = 'cv_audio_state_v1';
+const CV_THEME_KEY   = 'cv_theme_state_v1';
+const CV_VISITED_KEY = 'cv_site_visited_v1';
+
+function cvLoadJSON(key, fallback) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function cvSaveJSON(key, value) {
+  try { sessionStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+
+function runHeroAnimations(delay) {
+  document.querySelectorAll('.hero-animate').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * (delay || 150));
+  });
+}
+
+// ── Loading Screen (only on the first visit) ─────────────
 function initLoading() {
   const screen = document.getElementById('loading-screen');
   if (!screen) return;
 
+  if (sessionStorage.getItem(CV_VISITED_KEY)) {
+    // Returning visitor → skip loader for continuous navigation
+    screen.classList.add('skip');
+    document.body.style.overflow = '';
+    runHeroAnimations(60);
+    return;
+  }
+  sessionStorage.setItem(CV_VISITED_KEY, '1');
+
+  document.body.style.overflow = 'hidden';
   setTimeout(() => {
     screen.classList.add('hidden');
     document.body.style.overflow = '';
-    // Trigger hero animations
-    document.querySelectorAll('.hero-animate').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 150);
-    });
-  }, 1800);
-
-  document.body.style.overflow = 'hidden';
+    runHeroAnimations(150);
+  }, 1600);
 }
 
 // ── Custom Cursor ────────────────────────────────────────
@@ -144,63 +175,180 @@ function initNavigation() {
   });
 }
 
-// ── Top Bar & Audio ──────────────────────────────────────────────
+// ── Top Bar, Audio & Theme (persistent across pages) ─────
 let audioInitialized = false;
+
+function applyTheme(light) {
+  document.body.classList.toggle('light-mode', light);
+  const root = document.documentElement;
+  if (light) {
+    root.style.setProperty('--bg-primary', '#f4f4f5');
+    root.style.setProperty('--bg-secondary', '#ffffff');
+    root.style.setProperty('--bg-card', 'rgba(0,0,0,0.05)');
+    root.style.setProperty('--text-primary', '#0f172a');
+    root.style.setProperty('--text-secondary', '#334155');
+    root.style.setProperty('--text-muted', '#64748b');
+  } else {
+    root.style.setProperty('--bg-primary', '#080810');
+    root.style.setProperty('--bg-secondary', '#0d0d1a');
+    root.style.setProperty('--bg-card', 'rgba(255,255,255,0.03)');
+    root.style.setProperty('--text-primary', '#ffffff');
+    root.style.setProperty('--text-secondary', 'rgba(255,255,255,0.85)');
+    root.style.setProperty('--text-muted', 'rgba(255,255,255,0.55)');
+  }
+}
+
 function initTopBar() {
   const soundToggle = document.querySelector('.toggle-switch[data-type="sound"]');
   const themeToggle = document.querySelector('.toggle-switch[data-type="theme"]');
   const bgMusic = document.getElementById('bg-music');
 
-  if (bgMusic) bgMusic.volume = 0.3;
+  const audioState = cvLoadJSON(CV_AUDIO_KEY, {});
+  const themeState = cvLoadJSON(CV_THEME_KEY, { light: false });
 
-  // Autoplay on first user interaction
-  const playAudio = () => {
+  // ── Restore theme on every page ──
+  if (themeState.light) {
+    applyTheme(true);
+    if (themeToggle) themeToggle.classList.add('on');
+  }
+
+  // ── Restore sound toggle state ──
+  if (soundToggle && audioState.soundOn === false) {
+    soundToggle.classList.remove('on');
+  }
+
+  if (bgMusic) {
+    // metadata only → never download the full file until actually played
+    bgMusic.preload = 'metadata';
+    bgMusic.volume = typeof audioState.volume === 'number' ? audioState.volume : 0.3;
+
+    const resume = () => {
+      if (audioState.currentTime > 0) {
+        try { bgMusic.currentTime = audioState.currentTime; } catch (e) {}
+      }
+      if (audioState.soundOn !== false && audioState.playing) {
+        const tryPlay = () => bgMusic.play().then(() => { audioInitialized = true; })
+          .catch(() => {});
+        // Autoplay might be blocked — retry on the first user gesture
+        let retried = false;
+        const retry = () => {
+          if (!retried) { retried = true; tryPlay(); }
+          cleanup();
+        };
+        function cleanup() {
+          document.removeEventListener('click', retry);
+          document.removeEventListener('touchstart', retry);
+        }
+        document.addEventListener('click', retry, { once: true });
+        document.addEventListener('touchstart', retry, { once: true });
+        tryPlay();
+      }
+    };
+
+    if (bgMusic.readyState >= 1) resume();
+    else bgMusic.addEventListener('loadedmetadata', resume, { once: true });
+
+    // ── Persist playback state during the session ──
+    let lastSave = 0;
+    const persist = () => {
+      const now = Date.now();
+      if (now - lastSave < 1500) return;
+      lastSave = now;
+      audioState.currentTime = bgMusic.currentTime;
+      audioState.playing = !bgMusic.paused;
+      audioState.soundOn = soundToggle ? soundToggle.classList.contains('on') : true;
+      audioState.volume = bgMusic.volume;
+      cvSaveJSON(CV_AUDIO_KEY, audioState);
+    };
+    bgMusic.addEventListener('timeupdate', persist);
+    bgMusic.addEventListener('play', persist);
+    bgMusic.addEventListener('pause', persist);
+
+    const saveOnExit = () => {
+      audioState.currentTime = bgMusic.currentTime;
+      audioState.playing = !bgMusic.paused;
+      audioState.soundOn = soundToggle ? soundToggle.classList.contains('on') : true;
+      audioState.volume = bgMusic.volume;
+      cvSaveJSON(CV_AUDIO_KEY, audioState);
+    };
+    window.addEventListener('pagehide', saveOnExit);
+    window.addEventListener('beforeunload', saveOnExit);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') saveOnExit();
+    });
+  }
+
+  // First-ever visit: start music on the first user interaction if ON
+  const playOnFirstGesture = () => {
     if (!audioInitialized && soundToggle && soundToggle.classList.contains('on') && bgMusic) {
-      bgMusic.play().then(() => {
-        audioInitialized = true;
-      }).catch(e => console.log('Autoplay prevented by browser'));
+      bgMusic.play().then(() => { audioInitialized = true; }).catch(() => {});
     }
   };
-
-  document.addEventListener('click', playAudio, { once: true });
-  document.addEventListener('scroll', playAudio, { once: true });
-  document.addEventListener('touchstart', playAudio, { once: true });
+  document.addEventListener('click', playOnFirstGesture, { once: true });
+  document.addEventListener('touchstart', playOnFirstGesture, { once: true });
 
   if (soundToggle) {
     soundToggle.addEventListener('click', () => {
       soundToggle.classList.toggle('on');
-      if (bgMusic) {
-        if (soundToggle.classList.contains('on')) {
-          bgMusic.play().catch(e => console.log(e));
-          audioInitialized = true;
-        } else {
-          bgMusic.pause();
-        }
+      if (!bgMusic) return;
+      if (soundToggle.classList.contains('on')) {
+        bgMusic.play().catch(() => {});
+        audioInitialized = true;
+      } else {
+        bgMusic.pause();
       }
+      audioState.currentTime = bgMusic.currentTime;
+      audioState.playing = !bgMusic.paused;
+      audioState.soundOn = soundToggle.classList.contains('on');
+      audioState.volume = bgMusic.volume;
+      cvSaveJSON(CV_AUDIO_KEY, audioState);
     });
   }
+
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
-      themeToggle.classList.toggle('on');
-      document.body.classList.toggle('light-mode');
-      
-      if (document.body.classList.contains('light-mode')) {
-        document.documentElement.style.setProperty('--bg-primary', '#f4f4f5');
-        document.documentElement.style.setProperty('--bg-secondary', '#ffffff');
-        document.documentElement.style.setProperty('--bg-card', 'rgba(0,0,0,0.05)');
-        document.documentElement.style.setProperty('--text-primary', '#0f172a');
-        document.documentElement.style.setProperty('--text-secondary', '#334155');
-        document.documentElement.style.setProperty('--text-muted', '#64748b');
-      } else {
-        document.documentElement.style.setProperty('--bg-primary', '#080810');
-        document.documentElement.style.setProperty('--bg-secondary', '#0d0d1a');
-        document.documentElement.style.setProperty('--bg-card', 'rgba(255,255,255,0.03)');
-        document.documentElement.style.setProperty('--text-primary', '#ffffff');
-        document.documentElement.style.setProperty('--text-secondary', 'rgba(255,255,255,0.85)');
-        document.documentElement.style.setProperty('--text-muted', 'rgba(255,255,255,0.55)');
-      }
+      const on = themeToggle.classList.toggle('on');
+      applyTheme(on);
+      cvSaveJSON(CV_THEME_KEY, { light: on });
     });
   }
+}
+
+// ── Smooth page transitions (no more "website restarting" feel) ──
+function initPageTransitions() {
+  document.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href) return;
+    if (a.target === '_blank') return;
+    if (href.startsWith('#') || href.startsWith('javascript:')) return;
+    if (/^(https?:)?\/\//.test(href)) return;
+    if (!/\.html($|\?)/.test(href)) return;
+    // Same page → let it behave normally
+    const targetPath = href.split('?')[0];
+    if (targetPath === currentPageName()) return;
+
+    a.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      navigateToPage(href);
+    });
+  });
+}
+
+function currentPageName() {
+  return window.location.pathname.split('/').pop() || 'index.html';
+}
+
+function navigateToPage(url) {
+  let overlay = document.getElementById('page-transition-layer');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'page-transition-layer';
+    overlay.className = 'page-transition';
+    document.body.appendChild(overlay);
+  }
+  requestAnimationFrame(() => overlay.classList.add('entering'));
+  setTimeout(() => { window.location.href = url; }, 380);
 }
 
 // ── Counter Animations ───────────────────────────────────
@@ -402,16 +550,16 @@ function buildPage() {
   // Right panel mini projects
   document.querySelectorAll('[data-mini-projects]').forEach(container => {
     container.innerHTML = DATA.projects.slice(0, 3).map(p => `
-      <div class="panel-proj-item" id="mini-proj-${p.id}" onclick="openLightbox(${p.id})">
+      <a href="project.html?id=${p.id}" class="panel-proj-item" id="mini-proj-${p.id}" style="text-decoration:none;color:inherit;display:flex;">
         ${p.cover 
-          ? `<img src="${p.cover}" class="panel-proj-img" style="width:50px;height:50px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border);flex-shrink:0;">`
+          ? `<img src="${p.cover}" class="panel-proj-img" style="width:50px;height:50px;border-radius:var(--radius-sm);object-fit:contain;background:#0d0d1a;padding:4px;border:1px solid var(--border);flex-shrink:0;">`
           : `<div class="panel-proj-img-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.1));width:50px;height:50px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:1px solid var(--border);flex-shrink:0;">${getProjectEmoji(p.category)}</div>`
         }
         <div class="panel-proj-info" style="cursor:pointer;">
           <div class="panel-proj-cat">${p.category}</div>
           <div class="panel-proj-title">${p.title}</div>
         </div>
-      </div>
+      </a>
     `).join('');
   });
 
@@ -447,10 +595,8 @@ function buildProjects(filter = 'all') {
     container.innerHTML = filtered.map(p => `
       <div class="work-card reveal" data-category="${p.category}" id="work-${p.id}">
         ${p.cover
-          ? `<img src="${p.cover}" style="width:100%;height:220px;object-fit:cover;border-radius:var(--radius-md) var(--radius-md) 0 0;" alt="${p.title}">`
-          : `<div class="work-card-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.1));">
-              ${getProjectEmoji(p.category)}
-            </div>`
+          ? `<div class="work-media"><img src="${p.cover}" alt="${p.title}" loading="lazy" class="work-media-img" onload="window.__fitProjectCover && window.__fitProjectCover(this)"></div>`
+          : `<div class="work-media work-media-empty">${getProjectEmoji(p.category)}</div>`
         }
         <div class="work-card-info">
           <div>
@@ -460,7 +606,7 @@ function buildProjects(filter = 'all') {
           <div class="work-year">${p.year}</div>
         </div>
         <div class="work-card-hover">
-          <button class="work-view-btn" onclick="openLightbox(${p.id})">VIEW PROJECT</button>
+          <a href="project.html?id=${p.id}" class="work-view-btn">VIEW PROJECT</a>
         </div>
       </div>
     `).join('');
@@ -468,60 +614,21 @@ function buildProjects(filter = 'all') {
   });
 }
 
-// ── Lightbox Logic ─────────────────────────────────────────
-window.openLightbox = function(id) {
-  const project = DATA.projects.find(p => p.id == id);
-  if (!project) return;
-  
-  let lightbox = document.getElementById('project-lightbox');
-  if (!lightbox) {
-    lightbox = document.createElement('div');
-    lightbox.id = 'project-lightbox';
-    lightbox.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;opacity:0;transition:opacity 0.3s;pointer-events:none;';
-    document.body.appendChild(lightbox);
-  }
-  
-  let mediaHtml = '';
-  if (project.media && project.media.length > 0) {
-    mediaHtml = project.media.map(m => {
-      if (m.type === 'video') {
-        return `<video src="${m.src}" controls autoplay style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;"></video>`;
-      } else {
-        return `<img src="${m.src}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;object-fit:contain;">`;
-      }
-    }).join('');
-  } else if (project.cover) {
-    mediaHtml = `<img src="${project.cover}" style="max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-bottom:1rem;object-fit:contain;">`;
-  } else {
-    mediaHtml = `<div style="padding:3rem;background:var(--bg-card);border-radius:12px;font-family:var(--font-mono);color:var(--text-muted)">No media uploaded yet.</div>`;
-  }
-
-  lightbox.innerHTML = `
-    <button onclick="closeLightbox()" style="position:absolute;top:2rem;right:2rem;background:transparent;border:none;color:white;font-size:2rem;cursor:pointer;z-index:10000;">&times;</button>
-    <div style="width:100%;max-width:800px;text-align:center;position:relative;z-index:10000;display:flex;flex-direction:column;align-items:center;">
-      ${mediaHtml}
-      <h2 style="margin-top:1rem;color:var(--purple-light);font-family:var(--font-display);font-size:1.5rem;">${project.title}</h2>
-      <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:0.5rem;max-width:600px;">${project.description}</p>
-      <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono)">${project.category.toUpperCase()} — ${project.year}</div>
-    </div>
-  `;
-  
-  lightbox.style.pointerEvents = 'auto';
-  requestAnimationFrame(() => {
-    lightbox.style.opacity = '1';
-  });
+// Intelligent cover fitting: read the real image ratio and size the
+// media box accordingly so the artwork is never cropped or stretched.
+window.__fitProjectCover = function (img) {
+  const wrap = img.closest('.work-media');
+  if (!wrap) return;
+  const w = img.naturalWidth || 1;
+  const h = img.naturalHeight || 1;
+  const ratio = w / h;
+  wrap.classList.remove('r-portrait', 'r-wide', 'r-square');
+  if (ratio < 0.8) wrap.classList.add('r-portrait');
+  else if (ratio > 1.7) wrap.classList.add('r-wide');
+  else wrap.classList.add('r-square');
 };
 
-window.closeLightbox = function() {
-  const lightbox = document.getElementById('project-lightbox');
-  if (lightbox) {
-    lightbox.style.opacity = '0';
-    lightbox.style.pointerEvents = 'none';
-    setTimeout(() => {
-      lightbox.innerHTML = ''; // clear videos so they stop playing
-    }, 300);
-  }
-};
+
 
 function buildBlog() {
   const posts = [

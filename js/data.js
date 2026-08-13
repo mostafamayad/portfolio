@@ -110,13 +110,14 @@ const PORTFOLIO_DATA = {
   ],
 
   // Projects — image/video controlled from Admin Panel
+  // Backward-compatible optional fields: client, services, tools, featured, layout
   projects: [
-    { id: 1, title: 'Brand Identity Project',     category: 'branding', year: '2024', description: 'Full brand identity design', cover: '', media: [], type: 'image' },
-    { id: 2, title: 'Social Media Campaign',      category: 'social',   year: '2024', description: 'Social media content series', cover: '', media: [], type: 'image' },
-    { id: 3, title: 'Motion Graphics Reel',       category: 'motion',   year: '2024', description: 'Animated promo video', cover: '', media: [], type: 'video' },
-    { id: 4, title: 'UI/UX Dashboard Design',     category: 'web',      year: '2023', description: 'SaaS product UI design', cover: '', media: [], type: 'image' },
-    { id: 5, title: 'Event Poster Series',        category: 'poster',   year: '2023', description: 'Event branding posters', cover: '', media: [], type: 'image' },
-    { id: 6, title: 'Network Infrastructure',     category: 'it',       year: '2023', description: 'Enterprise network setup', cover: '', media: [], type: 'image' },
+    { id: 1, title: 'Brand Identity Project',     category: 'branding', year: '2024', description: 'Full brand identity design', cover: '', media: [], type: 'image', client: '', services: [], tools: [], featured: true,  layout: 'auto' },
+    { id: 2, title: 'Social Media Campaign',      category: 'social',   year: '2024', description: 'Social media content series', cover: '', media: [], type: 'image', client: '', services: [], tools: [], featured: true,  layout: 'auto' },
+    { id: 3, title: 'Motion Graphics Reel',       category: 'motion',   year: '2024', description: 'Animated promo video', cover: '', media: [], type: 'video', client: '', services: [], tools: [], featured: false, layout: 'auto' },
+    { id: 4, title: 'UI/UX Dashboard Design',     category: 'web',      year: '2023', description: 'SaaS product UI design', cover: '', media: [], type: 'image', client: '', services: [], tools: [], featured: false, layout: 'auto' },
+    { id: 5, title: 'Event Poster Series',        category: 'poster',   year: '2023', description: 'Event branding posters', cover: '', media: [], type: 'image', client: '', services: [], tools: [], featured: false, layout: 'auto' },
+    { id: 6, title: 'Network Infrastructure',     category: 'it',       year: '2023', description: 'Enterprise network setup', cover: '', media: [], type: 'image', client: '', services: [], tools: [], featured: false, layout: 'auto' },
   ],
 
   services: [
@@ -158,3 +159,33 @@ function deepMerge(target, source) {
 }
 
 const DATA = loadData();
+
+// ── Project normalization (backward compatible) ────────────
+const PROJECT_DEFAULTS = {
+  client: '',
+  services: [],
+  tools: [],
+  featured: false,
+  layout: 'auto',
+};
+
+function strToList(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).map(String);
+  if (typeof value === 'string')
+    return value.split(/[,،\n]/).map(s => s.trim()).filter(Boolean);
+  return [];
+}
+
+function normalizeProject(p) {
+  if (!p || typeof p !== 'object') return p;
+  const merged = Object.assign({}, PROJECT_DEFAULTS, p);
+  merged.services = strToList(p.services);
+  merged.tools = strToList(p.tools);
+  return merged;
+}
+
+// Projects saved by the admin may lack new fields — fill defaults safely.
+function normalizeProjects(list) {
+  if (!Array.isArray(list)) return [];
+  return list.map(normalizeProject);
+}

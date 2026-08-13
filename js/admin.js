@@ -22,6 +22,10 @@ function loadAdminData() {
   catch(e) { adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA)); }
   if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
   if (!adminData.personal) adminData.personal = JSON.parse(JSON.stringify(PORTFOLIO_DATA.personal));
+  // Ensure old saved projects get optional fields without losing data
+  if (typeof normalizeProjects === 'function') {
+    adminData.projects = normalizeProjects(adminData.projects);
+  }
 }
 
 function saveAll() {
@@ -242,8 +246,11 @@ function populateProjects() {
   const container = document.getElementById('projects-fields');
   if (!container) return;
   if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
+  // Fill any missing optional fields so old saved projects stay editable & safe
+  adminData.projects = normalizeProjects(adminData.projects);
+  const projList = adminData.projects;
 
-  container.innerHTML = adminData.projects.map((p, i) => `
+  container.innerHTML = projList.map((p, i) => `
     <div class="item-card project-card" id="proj-card-${i}">
       <div class="item-card-header">
         <span class="item-num">📁 مشروع ${i+1} — ${p.title}</span>
@@ -278,6 +285,36 @@ function populateProjects() {
           <input class="form-input" id="proj-desc-${i}" value="${p.description || ''}">
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">العميل (Client)</label>
+          <input class="form-input" id="proj-client-${i}" value="${p.client || ''}" placeholder="اختياري — اسم العميل">
+        </div>
+        <div class="form-group">
+          <label class="form-label">خدمات المشروع (Services)</label>
+          <input class="form-input" id="proj-services-${i}" value="${(p.services||[]).join(', ')}" placeholder="Branding, Social Media, Video">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الأدوات (Tools / Skills)</label>
+          <input class="form-input" id="proj-tools-${i}" value="${(p.tools||[]).join(', ')}" placeholder="Photoshop, Illustrator, Premiere">
+        </div>
+        <div class="form-group">
+          <label class="form-label">تخطيط المعرض (Layout)</label>
+          <select class="form-input" id="proj-layout-${i}">
+            <option value="auto"     ${(p.layout||'auto')==='auto'?'selected':''}>تلقائي — يحافظ على أبعاد كل صورة (Masonry)</option>
+            <option value="grid"     ${p.layout==='grid'?'selected':''}>شبكة موحدة (Grid)</option>
+            <option value="editorial" ${p.layout==='editorial'?'selected':''}>عرضي (Editorial)</option>
+          </select>
+        </div>
+      </div>
+      <div class="featured-row">
+        <label class="featured-check">
+          <input type="checkbox" id="proj-featured-${i}" ${p.featured ? 'checked' : ''}>
+          <span>مشروع مميز (Featured)</span>
+        </label>
+      </div>
 
       <!-- Cover Image Upload -->
       <div class="form-group">
@@ -285,7 +322,7 @@ function populateProjects() {
         <div class="upload-area" onclick="document.getElementById('proj-cover-upload-${i}').click()">
           <input type="file" id="proj-cover-upload-${i}" accept="image/*" style="display:none" onchange="handleProjectCover(${i}, this)">
           <div id="proj-cover-preview-${i}" class="upload-preview">
-            ${p.cover ? `<img src="${p.cover}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">` : '<div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لرفع صورة الغلاف</span></div>'}
+            ${p.cover ? `<img src="${p.cover}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;background:#0d0d1a">` : '<div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لرفع صورة الغلاف</span></div>'}
           </div>
         </div>
       </div>
@@ -378,10 +415,17 @@ window.removeMedia = function(projIdx, mediaIdx) {
 
 window.saveProject = function(projIdx) {
   const panel = document.getElementById('tab-projects');
-  adminData.projects[projIdx].title       = getVal(panel, `proj-title-${projIdx}`);
-  adminData.projects[projIdx].category    = document.getElementById(`proj-cat-${projIdx}`).value;
-  adminData.projects[projIdx].year        = getVal(panel, `proj-year-${projIdx}`);
-  adminData.projects[projIdx].description = getVal(panel, `proj-desc-${projIdx}`);
+  const proj = adminData.projects[projIdx];
+  proj.title       = getVal(panel, `proj-title-${projIdx}`);
+  proj.category    = document.getElementById(`proj-cat-${projIdx}`).value;
+  proj.year        = getVal(panel, `proj-year-${projIdx}`);
+  proj.description = getVal(panel, `proj-desc-${projIdx}`);
+  proj.client      = getVal(panel, `proj-client-${projIdx}`);
+  proj.services    = strToList(getVal(panel, `proj-services-${projIdx}`));
+  proj.tools       = strToList(getVal(panel, `proj-tools-${projIdx}`));
+  proj.layout      = document.getElementById(`proj-layout-${projIdx}`).value || 'auto';
+  const featBox = document.getElementById(`proj-featured-${projIdx}`);
+  proj.featured    = featBox ? featBox.checked : !!proj.featured;
   saveAll();
 };
 
@@ -402,7 +446,12 @@ window.addNewProject = function() {
     description: '',
     cover: '',
     media: [],
-    type: 'image'
+    type: 'image',
+    client: '',
+    services: [],
+    tools: [],
+    featured: false,
+    layout: 'auto'
   });
   saveAll();
   populateProjects();
