@@ -56,8 +56,43 @@
 
         <!-- Tab: Personal -->
         <div class="tab-panel active" id="tab-personal">
+          <!-- Images Section -->
+          <div class="form-section">
+            <h3 class="form-section-title">📸 الصور الشخصية</h3>
+            
+            <div class="image-section">
+              <div class="image-section-title"><i class="fas fa-user-circle"></i> صورتك الشخصية (Profile Photo)</div>
+              <div id="preview-profile" style="margin-bottom:0.75rem;min-height:30px"></div>
+              <div class="upload-area" onclick="document.getElementById('upload-profile').click()">
+                <input type="file" id="upload-profile" accept="image/*" style="display:none">
+                <div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لتغيير صورتك الشخصية</span></div>
+              </div>
+            </div>
+
+            <div class="image-section">
+              <div class="image-section-title"><i class="fas fa-image"></i> صورة الغلاف (Cover / Hero)</div>
+              <div id="preview-cover" style="margin-bottom:0.75rem;min-height:30px"></div>
+              <div class="upload-area" onclick="document.getElementById('upload-cover').click()">
+                <input type="file" id="upload-cover" accept="image/*" style="display:none">
+                <div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لتغيير صورة الغلاف</span></div>
+              </div>
+            </div>
+
+            <div class="image-section">
+              <div class="image-section-title"><i class="fas fa-trademark"></i> اللوجو (Logo)</div>
+              <div id="preview-logo" style="margin-bottom:0.75rem;min-height:30px"></div>
+              <div class="upload-area" onclick="document.getElementById('upload-logo').click()">
+                <input type="file" id="upload-logo" accept="image/*,.svg" style="display:none">
+                <div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لتغيير اللوجو</span></div>
+              </div>
+            </div>
+            <button class="save-btn" data-save="personal"><i class="fas fa-save"></i> حفظ الصور</button>
+          </div>
+
+          <!-- Personal Info -->
           <div class="form-section">
             <h3 class="form-section-title">المعلومات الأساسية</h3>
+
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label" for="field-name">الاسم</label>

@@ -1,11 +1,8 @@
 // ============================================================
-// ADMIN.JS — Admin Panel Logic
-// Used by admin/index.html
+// ADMIN.JS — Full Admin Panel with Image/Video Upload
 // ============================================================
 
 const ADMIN_PASSWORD = 'admin123';
-
-// ── State ────────────────────────────────────────────────
 let adminData = null;
 
 // ── Init ─────────────────────────────────────────────────
@@ -21,29 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadAdminData() {
   const saved = localStorage.getItem('portfolio_data');
-  if (saved) {
-    try { adminData = JSON.parse(saved); } catch(e) { adminData = {}; }
-  } else {
-    adminData = {};
-  }
-  // Merge with defaults
-  adminData = deepMergeAdmin(PORTFOLIO_DATA, adminData);
+  try { adminData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(PORTFOLIO_DATA)); }
+  catch(e) { adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA)); }
+  if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
+  if (!adminData.personal) adminData.personal = JSON.parse(JSON.stringify(PORTFOLIO_DATA.personal));
 }
 
-function deepMergeAdmin(target, source) {
-  const result = JSON.parse(JSON.stringify(target));
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMergeAdmin(target[key] || {}, source[key]);
-    } else if (source[key] !== undefined && source[key] !== null) {
-      result[key] = source[key];
-    }
-  }
-  return result;
-}
-
-function saveToLocalStorage() {
+function saveAll() {
   localStorage.setItem('portfolio_data', JSON.stringify(adminData));
+  showAdminToast('✓ تم الحفظ بنجاح', 'success');
 }
 
 // ── Login ─────────────────────────────────────────────────
@@ -54,11 +37,8 @@ function initLogin() {
   const loginError = document.getElementById('login-error');
   const dashboard = document.getElementById('admin-dashboard');
 
-  if (!loginBtn || !loginInput) return;
-
   function attemptLogin() {
-    const pass = loginInput.value.trim();
-    if (pass === ADMIN_PASSWORD) {
+    if (loginInput.value.trim() === ADMIN_PASSWORD) {
       loginScreen.classList.add('hidden');
       dashboard.style.display = 'block';
       populateAllForms();
@@ -70,22 +50,18 @@ function initLogin() {
       setTimeout(() => { loginInput.style.borderColor = ''; }, 1500);
     }
   }
-
   loginBtn.addEventListener('click', attemptLogin);
-  loginInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') attemptLogin();
-  });
+  loginInput.addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
 }
 
 // ── Tabs ──────────────────────────────────────────────────
 function initTabs() {
   document.querySelectorAll('.admin-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
       document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-      const panel = document.getElementById(`tab-${tabId}`);
+      const panel = document.getElementById(`tab-${btn.dataset.tab}`);
       if (panel) panel.classList.add('active');
     });
   });
@@ -95,81 +71,13 @@ function initTabs() {
 function initSaveButtons() {
   document.querySelectorAll('[data-save]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const section = btn.dataset.save;
-      collectFormData(section);
-      saveToLocalStorage();
-      showAdminToast('تم الحفظ بنجاح ✓', 'success');
+      collectFormData(btn.dataset.save);
+      saveAll();
     });
   });
 }
 
-function collectFormData(section) {
-  const panel = document.getElementById(`tab-${section}`);
-  if (!panel) return;
-
-  switch(section) {
-    case 'personal':
-      adminData.personal.name = getVal(panel, 'field-name');
-      adminData.personal.title = getVal(panel, 'field-title');
-      adminData.personal.bio = getVal(panel, 'field-bio');
-      adminData.personal.email = getVal(panel, 'field-email');
-      adminData.personal.phone = getVal(panel, 'field-phone');
-      adminData.personal.location = getVal(panel, 'field-location');
-      adminData.personal.university = getVal(panel, 'field-university');
-      adminData.personal.quote = getVal(panel, 'field-quote');
-      adminData.personal.currentVibe = getVal(panel, 'field-vibe');
-      break;
-
-    case 'social':
-      adminData.socials = adminData.socials.map((s, i) => ({
-        ...s,
-        url: getVal(panel, `social-url-${i}`)
-      }));
-      break;
-
-    case 'stats':
-      adminData.stats = adminData.stats.map((s, i) => ({
-        ...s,
-        value: parseInt(getVal(panel, `stat-value-${i}`)) || s.value,
-        label: getVal(panel, `stat-label-${i}`)
-      }));
-      break;
-
-    case 'projects':
-      adminData.projects = adminData.projects.map((p, i) => ({
-        ...p,
-        title: getVal(panel, `proj-title-${i}`),
-        description: getVal(panel, `proj-desc-${i}`),
-        link: getVal(panel, `proj-link-${i}`),
-        year: getVal(panel, `proj-year-${i}`)
-      }));
-      break;
-
-    case 'skills':
-      adminData.skills = adminData.skills.map((s, i) => ({
-        ...s,
-        name: getVal(panel, `skill-name-${i}`),
-        level: parseInt(getVal(panel, `skill-level-${i}`)) || s.level
-      }));
-      break;
-
-    case 'services':
-      adminData.services = adminData.services.map((s, i) => ({
-        ...s,
-        title: getVal(panel, `svc-title-${i}`),
-        desc: getVal(panel, `svc-desc-${i}`),
-        price: getVal(panel, `svc-price-${i}`)
-      }));
-      break;
-  }
-}
-
-function getVal(container, id) {
-  const el = container.querySelector(`#${id}`);
-  return el ? el.value : '';
-}
-
-// ── Populate Forms ────────────────────────────────────────
+// ── Populate All Forms ────────────────────────────────────
 function populateAllForms() {
   populatePersonal();
   populateSocial();
@@ -179,38 +87,142 @@ function populateAllForms() {
   populateServices();
 }
 
+// ── PERSONAL TAB ─────────────────────────────────────────
 function populatePersonal() {
-  const p = adminData.personal;
+  const p = adminData.personal || PORTFOLIO_DATA.personal;
   setVal('field-name', p.name);
   setVal('field-title', p.title);
-  setVal('field-bio', p.bio);
+  setVal('field-bio', p.bio ? p.bio.replace(/<[^>]*>/g, '') : '');
   setVal('field-email', p.email);
   setVal('field-phone', p.phone);
   setVal('field-location', p.location);
   setVal('field-university', p.university || '');
   setVal('field-quote', p.quote);
   setVal('field-vibe', p.currentVibe);
+
+  // Show current images
+  renderCurrentImage('preview-profile', p.profileImage);
+  renderCurrentImage('preview-cover', p.coverImage);
+  renderCurrentImage('preview-logo', p.logoImage);
+
+  // Image upload handlers
+  setupImageUpload('upload-profile', 'preview-profile', (base64) => {
+    if (!adminData.personal) adminData.personal = {};
+    adminData.personal.profileImage = base64;
+  });
+  setupImageUpload('upload-cover', 'preview-cover', (base64) => {
+    if (!adminData.personal) adminData.personal = {};
+    adminData.personal.coverImage = base64;
+  });
+  setupImageUpload('upload-logo', 'preview-logo', (base64) => {
+    if (!adminData.personal) adminData.personal = {};
+    adminData.personal.logoImage = base64;
+  });
 }
 
+function renderCurrentImage(previewId, src) {
+  const preview = document.getElementById(previewId);
+  if (!preview || !src) return;
+  preview.innerHTML = `<img src="${src}" style="max-width:100%;max-height:150px;border-radius:8px;object-fit:cover">`;
+}
+
+function setupImageUpload(inputId, previewId, callback) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64 = e.target.result;
+      callback(base64);
+      renderCurrentImage(previewId, base64);
+      showAdminToast('✓ تم رفع الصورة، اضغط حفظ لتأكيد التغييرات');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function collectFormData(section) {
+  const panel = document.getElementById(`tab-${section}`);
+  if (!panel) return;
+  if (!adminData.personal) adminData.personal = {};
+
+  switch(section) {
+    case 'personal':
+      adminData.personal.name      = getVal(panel, 'field-name');
+      adminData.personal.title     = getVal(panel, 'field-title');
+      adminData.personal.bio       = getVal(panel, 'field-bio');
+      adminData.personal.email     = getVal(panel, 'field-email');
+      adminData.personal.phone     = getVal(panel, 'field-phone');
+      adminData.personal.location  = getVal(panel, 'field-location');
+      adminData.personal.university= getVal(panel, 'field-university');
+      adminData.personal.quote     = getVal(panel, 'field-quote');
+      adminData.personal.currentVibe = getVal(panel, 'field-vibe');
+      break;
+
+    case 'social':
+      if (!adminData.socials) adminData.socials = JSON.parse(JSON.stringify(PORTFOLIO_DATA.socials));
+      adminData.socials = adminData.socials.map((s, i) => ({
+        ...s, url: getVal(panel, `social-url-${i}`)
+      }));
+      break;
+
+    case 'stats':
+      if (!adminData.stats) adminData.stats = JSON.parse(JSON.stringify(PORTFOLIO_DATA.stats));
+      adminData.stats = adminData.stats.map((s, i) => ({
+        ...s,
+        value: parseInt(getVal(panel, `stat-value-${i}`)) || s.value,
+        label: getVal(panel, `stat-label-${i}`)
+      }));
+      break;
+
+    case 'skills':
+      if (!adminData.skills) adminData.skills = JSON.parse(JSON.stringify(PORTFOLIO_DATA.skills));
+      adminData.skills = adminData.skills.map((s, i) => ({
+        ...s,
+        name: getVal(panel, `skill-name-${i}`),
+        level: parseInt(getVal(panel, `skill-level-${i}`)) || s.level
+      }));
+      break;
+
+    case 'services':
+      if (!adminData.services) adminData.services = JSON.parse(JSON.stringify(PORTFOLIO_DATA.services));
+      adminData.services = adminData.services.map((s, i) => ({
+        ...s,
+        title: getVal(panel, `svc-title-${i}`),
+        desc:  getVal(panel, `svc-desc-${i}`),
+        price: getVal(panel, `svc-price-${i}`)
+      }));
+      break;
+
+    case 'projects':
+      // Projects are saved inline via individual save buttons
+      break;
+  }
+}
+
+// ── SOCIAL TAB ────────────────────────────────────────────
 function populateSocial() {
   const container = document.getElementById('social-fields');
   if (!container) return;
-  container.innerHTML = adminData.socials.map((s, i) => `
+  const socials = adminData.socials || PORTFOLIO_DATA.socials;
+  container.innerHTML = socials.map((s, i) => `
     <div class="form-group">
-      <label class="form-label">${s.name}</label>
-      <input class="form-input" id="social-url-${i}" value="${s.url}" placeholder="https://...">
+      <label class="form-label">${s.name} <i class="${s.icon}" style="margin-right:0.3rem;color:var(--purple-light)"></i></label>
+      <input class="form-input" id="social-url-${i}" value="${s.url || ''}" placeholder="https://..." dir="ltr">
     </div>
   `).join('');
 }
 
+// ── STATS TAB ─────────────────────────────────────────────
 function populateStats() {
   const container = document.getElementById('stats-fields');
   if (!container) return;
-  container.innerHTML = adminData.stats.map((s, i) => `
+  const stats = adminData.stats || PORTFOLIO_DATA.stats;
+  container.innerHTML = stats.map((s, i) => `
     <div class="item-card">
-      <div class="item-card-header">
-        <span class="item-num">${s.icon} الإحصائية ${i+1}</span>
-      </div>
+      <div class="item-card-header"><span class="item-num">${s.icon} الإحصائية ${i+1}</span></div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">القيمة</label>
@@ -218,73 +230,221 @@ function populateStats() {
         </div>
         <div class="form-group">
           <label class="form-label">التسمية</label>
-          <input class="form-input" id="stat-label-${i}" value="${s.label}">
+          <input class="form-input" id="stat-label-${i}" value="${s.label.replace('\n',' ')}">
         </div>
       </div>
     </div>
   `).join('');
 }
 
+// ── PROJECTS TAB (with image/video upload) ────────────────
 function populateProjects() {
   const container = document.getElementById('projects-fields');
   if (!container) return;
+  if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
+
   container.innerHTML = adminData.projects.map((p, i) => `
-    <div class="item-card">
+    <div class="item-card project-card" id="proj-card-${i}">
       <div class="item-card-header">
-        <span class="item-num">مشروع ${i+1}</span>
+        <span class="item-num">📁 مشروع ${i+1} — ${p.title}</span>
+        <button class="item-del-btn" onclick="deleteProject(${i})" title="حذف المشروع"><i class="fas fa-trash"></i></button>
       </div>
-      <div class="form-group">
-        <label class="form-label">اسم المشروع</label>
-        <input class="form-input" id="proj-title-${i}" value="${p.title}">
-      </div>
-      <div class="form-group">
-        <label class="form-label">الوصف</label>
-        <textarea class="form-textarea" id="proj-desc-${i}" rows="2">${p.description}</textarea>
+
+      <!-- Basic Info -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">اسم المشروع</label>
+          <input class="form-input" id="proj-title-${i}" value="${p.title || ''}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الفئة</label>
+          <select class="form-input" id="proj-cat-${i}">
+            <option value="social"   ${p.category==='social'   ?'selected':''}>Social Media</option>
+            <option value="poster"   ${p.category==='poster'   ?'selected':''}>Poster / Print</option>
+            <option value="branding" ${p.category==='branding' ?'selected':''}>Branding</option>
+            <option value="web"      ${p.category==='web'      ?'selected':''}>UI / UX</option>
+            <option value="motion"   ${p.category==='motion'   ?'selected':''}>Motion / Video</option>
+            <option value="it"       ${p.category==='it'       ?'selected':''}>IT Solutions</option>
+          </select>
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">رابط المشروع</label>
-          <input class="form-input" id="proj-link-${i}" value="${p.link}" placeholder="https://...">
+          <label class="form-label">السنة</label>
+          <input class="form-input" id="proj-year-${i}" value="${p.year || '2024'}" placeholder="2024">
         </div>
         <div class="form-group">
-          <label class="form-label">السنة</label>
-          <input class="form-input" id="proj-year-${i}" value="${p.year}">
+          <label class="form-label">وصف قصير</label>
+          <input class="form-input" id="proj-desc-${i}" value="${p.description || ''}">
         </div>
       </div>
+
+      <!-- Cover Image Upload -->
+      <div class="form-group">
+        <label class="form-label">🖼️ صورة الغلاف (Cover)</label>
+        <div class="upload-area" onclick="document.getElementById('proj-cover-upload-${i}').click()">
+          <input type="file" id="proj-cover-upload-${i}" accept="image/*" style="display:none" onchange="handleProjectCover(${i}, this)">
+          <div id="proj-cover-preview-${i}" class="upload-preview">
+            ${p.cover ? `<img src="${p.cover}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">` : '<div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i><span>اضغط لرفع صورة الغلاف</span></div>'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Gallery Upload -->
+      <div class="form-group">
+        <label class="form-label">📂 معرض الصور والفيديوهات (يمكن إضافة متعدد)</label>
+        <div class="upload-area" onclick="document.getElementById('proj-media-upload-${i}').click()">
+          <input type="file" id="proj-media-upload-${i}" accept="image/*,video/*" multiple style="display:none" onchange="handleProjectMedia(${i}, this)">
+          <div class="upload-placeholder small">
+            <i class="fas fa-photo-video"></i>
+            <span>اضغط لإضافة صور أو فيديوهات</span>
+            <span class="upload-hint">JPG, PNG, GIF, MP4, MOV — بدون حد للجودة</span>
+          </div>
+        </div>
+        <div id="proj-media-gallery-${i}" class="media-gallery">
+          ${renderMediaGallery(p.media || [], i)}
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveProject(${i})"><i class="fas fa-save"></i> حفظ هذا المشروع</button>
     </div>
   `).join('');
+
+  // Add new project button
+  container.innerHTML += `
+    <button class="add-btn" onclick="addNewProject()">
+      <i class="fas fa-plus"></i> إضافة مشروع جديد
+    </button>
+  `;
 }
 
+function renderMediaGallery(media, projIdx) {
+  if (!media || media.length === 0) return '';
+  return `<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem">` +
+    media.map((m, mi) => {
+      if (m.type === 'video') {
+        return `<div style="position:relative;width:120px;">
+          <video src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)"></video>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+        </div>`;
+      } else {
+        return `<div style="position:relative;width:120px;">
+          <img src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)">
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+        </div>`;
+      }
+    }).join('') + `</div>`;
+}
+
+window.handleProjectCover = function(projIdx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    adminData.projects[projIdx].cover = e.target.result;
+    const preview = document.getElementById(`proj-cover-preview-${projIdx}`);
+    if (preview) preview.innerHTML = `<img src="${e.target.result}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">`;
+    showAdminToast('✓ تم رفع صورة الغلاف');
+  };
+  reader.readAsDataURL(file);
+};
+
+window.handleProjectMedia = function(projIdx, input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  if (!adminData.projects[projIdx].media) adminData.projects[projIdx].media = [];
+  let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const isVideo = file.type.startsWith('video/');
+      adminData.projects[projIdx].media.push({ src: e.target.result, type: isVideo ? 'video' : 'image', name: file.name });
+      loaded++;
+      if (loaded === files.length) {
+        const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
+        if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
+        showAdminToast(`✓ تم رفع ${files.length} ملف`);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+window.removeMedia = function(projIdx, mediaIdx) {
+  adminData.projects[projIdx].media.splice(mediaIdx, 1);
+  const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
+  if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
+};
+
+window.saveProject = function(projIdx) {
+  const panel = document.getElementById('tab-projects');
+  adminData.projects[projIdx].title       = getVal(panel, `proj-title-${projIdx}`);
+  adminData.projects[projIdx].category    = document.getElementById(`proj-cat-${projIdx}`).value;
+  adminData.projects[projIdx].year        = getVal(panel, `proj-year-${projIdx}`);
+  adminData.projects[projIdx].description = getVal(panel, `proj-desc-${projIdx}`);
+  saveAll();
+};
+
+window.deleteProject = function(projIdx) {
+  if (!confirm('هتحذف المشروع ده، متأكد؟')) return;
+  adminData.projects.splice(projIdx, 1);
+  saveAll();
+  populateProjects();
+};
+
+window.addNewProject = function() {
+  if (!adminData.projects) adminData.projects = [];
+  adminData.projects.push({
+    id: Date.now(),
+    title: 'مشروع جديد',
+    category: 'social',
+    year: new Date().getFullYear().toString(),
+    description: '',
+    cover: '',
+    media: [],
+    type: 'image'
+  });
+  saveAll();
+  populateProjects();
+  // Scroll to new project
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.project-card');
+    if (cards.length) cards[cards.length-1].scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+};
+
+// ── SKILLS TAB ────────────────────────────────────────────
 function populateSkills() {
   const container = document.getElementById('skills-fields');
   if (!container) return;
-  container.innerHTML = adminData.skills.map((s, i) => `
+  const skills = adminData.skills || PORTFOLIO_DATA.skills;
+  container.style.display = 'grid';
+  container.style.gridTemplateColumns = '1fr 1fr';
+  container.style.gap = '1rem';
+  container.innerHTML = skills.map((s, i) => `
     <div class="item-card">
       <div class="form-group">
         <label class="form-label">اسم المهارة</label>
         <input class="form-input" id="skill-name-${i}" value="${s.name}">
       </div>
       <div class="form-group">
-        <label class="form-label">المستوى</label>
-        <div class="skill-level-wrap">
-          <input class="skill-level-input" type="range" id="skill-level-${i}" 
-            min="0" max="100" value="${s.level}"
-            oninput="document.getElementById('skill-val-${i}').textContent = this.value + '%'">
-          <span class="skill-level-val" id="skill-val-${i}">${s.level}%</span>
-        </div>
+        <label class="form-label">المستوى: <span id="skill-val-${i}">${s.level}%</span></label>
+        <input class="skill-level-input" type="range" id="skill-level-${i}" 
+          min="0" max="100" value="${s.level}"
+          oninput="document.getElementById('skill-val-${i}').textContent = this.value + '%'">
       </div>
     </div>
   `).join('');
 }
 
+// ── SERVICES TAB ──────────────────────────────────────────
 function populateServices() {
   const container = document.getElementById('services-fields');
   if (!container) return;
-  container.innerHTML = adminData.services.map((s, i) => `
+  const services = adminData.services || PORTFOLIO_DATA.services;
+  container.innerHTML = services.map((s, i) => `
     <div class="item-card">
-      <div class="item-card-header">
-        <span class="item-num">خدمة ${i+1}</span>
-      </div>
+      <div class="item-card-header"><span class="item-num">${s.icon} خدمة ${i+1}</span></div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">اسم الخدمة</label>
@@ -304,18 +464,20 @@ function populateServices() {
 }
 
 // ── Helpers ───────────────────────────────────────────────
+function getVal(container, id) {
+  const el = container ? container.querySelector(`#${id}`) : document.getElementById(id);
+  return el ? el.value : '';
+}
 function setVal(id, val) {
   const el = document.getElementById(id);
   if (el) el.value = val || '';
 }
 
-// ── Preview ───────────────────────────────────────────────
+// ── Preview, Reset, Logout ────────────────────────────────
 function initPreview() {
   const btn = document.getElementById('btn-preview');
   if (btn) btn.addEventListener('click', () => window.open('../index.html', '_blank'));
 }
-
-// ── Reset ─────────────────────────────────────────────────
 function initReset() {
   const btn = document.getElementById('btn-reset');
   if (!btn) return;
@@ -324,12 +486,10 @@ function initReset() {
       localStorage.removeItem('portfolio_data');
       adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA));
       populateAllForms();
-      showAdminToast('تم إعادة الضبط بنجاح', 'success');
+      showAdminToast('✓ تم إعادة الضبط', 'success');
     }
   });
 }
-
-// ── Logout ────────────────────────────────────────────────
 function initLogout() {
   const btn = document.getElementById('btn-logout');
   if (!btn) return;
@@ -346,5 +506,5 @@ function showAdminToast(msg, type = '') {
   if (!toast) return;
   toast.textContent = msg;
   toast.className = `admin-toast ${type} show`;
-  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }

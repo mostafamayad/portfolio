@@ -354,9 +354,80 @@ input, textarea, select {
 }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
 
+/* ── Upload Areas ─────────────────────────────────────── */
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-area:hover {
+  border-color: var(--purple);
+  background: rgba(124,58,237,0.05);
+}
+.upload-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text3);
+  font-size: 0.8rem;
+}
+.upload-placeholder i { font-size: 2rem; color: var(--purple); }
+.upload-placeholder.small { padding: 0.5rem; }
+.upload-placeholder.small i { font-size: 1.5rem; }
+.upload-hint {
+  font-size: 0.65rem;
+  color: var(--text3);
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── Media Gallery ─────────────────────────────────────── */
+.media-gallery {
+  margin-top: 0.75rem;
+}
+.media-gallery > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── Image Previews (Personal tab) ─────────────────────── */
+.image-section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: rgba(255,255,255,0.02);
+}
+.image-section-title {
+  font-size: 0.7rem;
+  color: var(--purple-l);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 @media (max-width: 768px) {
   .admin-layout { grid-template-columns: 1fr; }
   .admin-sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 1rem; }
   .admin-sidebar-footer { flex-direction: row; margin-top: 0; border-top: none; border-right: 1px solid var(--border); padding-top: 0; padding-right: 0.5rem; }
   .form-row { grid-template-columns: 1fr; }
 }
+

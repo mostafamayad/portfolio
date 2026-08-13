@@ -3,36 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Mostafa Ayad</title>
-  <meta name="description" content="Mostafa Ayad - Graphic Designer & IT Specialist">
+  <title>Mostafa Ayad — Graphic Designer & Visual Creator</title>
+  <meta name="description" content="Mostafa Mohamed Ayad — Graphic Designer, Motion Artist & IT Specialist from Tanta, Egypt.">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <!-- Background -->
   <canvas id="particles-canvas"></canvas>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
   <div id="scroll-progress"></div>
-  <!-- Cursors -->
   <div class="cursor"></div>
   <div class="cursor-follower"></div>
+
   <!-- Loading -->
   <div id="loading-screen">
     <div class="loader-content">
-      <div class="loader-logo">MA</div>
+      <img src="assets/images/logo.png" class="loader-logo-img" alt="MA Logo" onerror="this.style.display='none';document.querySelector('.loader-logo-text').style.display='block'">
+      <div class="loader-logo-text" style="display:none">MA</div>
       <div class="loader-bar"><div class="loader-progress"></div></div>
-      <div class="loader-text">LOADING...</div>
+      <div class="loader-text">LOADING PORTFOLIO...</div>
     </div>
   </div>
-  <!-- Page -->
+
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="page-wrapper">
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div class="logo-mark"><span data-field="initials">MA</span></div>
+        <div class="logo-mark">
+          <img src="assets/images/logo.png" alt="Logo" class="sidebar-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="logo-fallback-text" style="display:none" data-field="initials">MA</span>
+        </div>
         <div class="logo-text">
           <div class="logo-name"><span data-field="firstname">Mostafa</span><br><span data-field="lastname">Ayad</span></div>
           <div class="logo-sub">Graphic Designer<br>&amp; Visual Creator</div>
@@ -50,10 +58,7 @@
         </ul>
       </nav>
       <div class="sidebar-bottom">
-        <div class="available-badge" data-field="available">
-          <span class="available-dot"></span>
-          <span>Available for new projects</span>
-        </div>
+        <div class="available-badge"><span class="available-dot"></span><span>Available for work</span></div>
         <a href="contact.html" class="hire-me-btn"><span>HIRE ME</span><span>→</span></a>
         <div class="sidebar-socials" data-socials></div>
       </div>
@@ -78,55 +83,77 @@
         <div class="spotlight"></div>
         <div class="hero-inner">
           <div class="hero-text">
-            <h1 class="hero-headline hero-animate reveal">
+            <div class="hero-tag hero-animate">
+              <span class="hero-tag-dot"></span>
+              GRAPHIC DESIGNER & IT SPECIALIST
+            </div>
+            <h1 class="hero-headline hero-animate">
               <span class="line1">I DON'T JUST</span>
               <span class="line1">DESIGN.</span>
               <span class="line2">I CRAFT</span>
               <span class="line2">EXPERIENCES.</span>
             </h1>
-            <p class="hero-bio hero-animate reveal" data-field="bio">I'm <strong>Mostafa Mohamed Ayad</strong>, a Graphic Designer &amp; Visual Creator crafting bold, modern and unforgettable digital experiences.</p>
+            <p class="hero-bio hero-animate" data-field="bio"></p>
             <div class="hero-buttons hero-animate">
-              <a href="works.html" class="btn-primary" id="btn-explore"><span>EXPLORE MY WORKS</span><span>→</span></a>
-              <a href="contact.html" class="btn-secondary" id="btn-showreel"><span>HIRE ME</span><span class="btn-play"><i class="fas fa-play"></i></span></a>
+              <a href="works.html" class="btn-primary" id="btn-explore"><span>EXPLORE MY WORKS</span><span class="btn-arrow">→</span></a>
+              <a href="contact.html" class="btn-secondary" id="btn-hire"><span>HIRE ME</span></a>
             </div>
-            <div class="scroll-indicator hero-animate">
-              <span class="scroll-icon"><i class="fas fa-chevron-down"></i></span>
+            <div class="hero-scroll hero-animate">
+              <div class="scroll-line"></div>
               <span>SCROLL TO DISCOVER</span>
             </div>
           </div>
+
           <div class="hero-visual">
             <div class="hero-glow-ring">
-              <div class="orbit-dot"></div>
-              <div class="orbit-dot"></div>
-              <div class="orbit-dot"></div>
+              <div class="orbit-dot orbit-1"></div>
+              <div class="orbit-dot orbit-2"></div>
+              <div class="orbit-dot orbit-3"></div>
             </div>
             <div class="hero-photo-wrap">
-              <div class="hero-photo-placeholder">👤</div>
-              <div class="hero-logo-badge" data-field="initials">MA</div>
+              <img 
+                src="assets/images/profile.jpg" 
+                alt="Mostafa Ayad" 
+                class="hero-photo"
+                id="hero-profile-img"
+                onerror="this.style.display='none';document.getElementById('hero-photo-fallback').style.display='flex'"
+              >
+              <div class="hero-photo-placeholder" id="hero-photo-fallback" style="display:none">👤</div>
+              <div class="hero-badge-logo">
+                <img src="assets/images/logo.png" alt="MA" class="hero-badge-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                <span class="hero-badge-logo-text" style="display:none">MA</span>
+              </div>
             </div>
             <div class="hero-float-card top-right glass-card">
-              <div style="font-size:0.6rem;color:var(--text-muted);margin-bottom:3px">EXPERTISE</div>
-              <div style="font-size:0.75rem;font-weight:700">5+ Years Design</div>
+              <div class="float-card-icon">✦</div>
+              <div>
+                <div class="float-card-val">5+</div>
+                <div class="float-card-label">Years Design</div>
+              </div>
             </div>
             <div class="hero-float-card bottom-left glass-card">
-              <div style="font-size:0.6rem;color:var(--text-muted);margin-bottom:3px">LOCATION</div>
-              <div style="font-size:0.75rem;font-weight:700">Tanta, Egypt 🇪🇬</div>
+              <div class="float-card-icon">📍</div>
+              <div>
+                <div class="float-card-val">Tanta</div>
+                <div class="float-card-label">Egypt 🇪🇬</div>
+              </div>
+            </div>
+            <div class="hero-float-card bottom-right glass-card">
+              <div class="float-card-icon">🚀</div>
+              <div>
+                <div class="float-card-val">50+</div>
+                <div class="float-card-label">Projects Done</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- CATEGORIES SECTION -->
+      <!-- CATEGORIES -->
       <section class="categories-section">
         <div class="categories-header">
           <span class="section-label">01 — EXPLORE BY CATEGORY</span>
-          <a href="works.html" class="view-all-link" id="view-all-projects">VIEW ALL PROJECTS →</a>
-        </div>
-        <div class="categories-intro">
-          <div>
-            <div class="cat-title">EXPLORE BY CATEGORY</div>
-            <div class="cat-desc">A collection of selected work across different fields of design.</div>
-          </div>
+          <a href="works.html" class="view-all-link" id="view-all-projects">VIEW ALL →</a>
         </div>
         <div class="categories-scroll" data-categories></div>
       </section>
@@ -136,21 +163,28 @@
         <div data-stats style="display:contents"></div>
         <div class="stats-cta">
           <div class="stats-cta-text">INTERESTED IN<br>WORKING TOGETHER?</div>
-          <a href="contact.html" class="stats-cta-btn" id="btn-contact-cta" aria-label="Contact"><i class="fas fa-arrow-right"></i></a>
+          <a href="contact.html" class="stats-cta-btn" id="btn-contact-cta"><i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </main>
 
     <!-- RIGHT PANEL -->
     <aside class="right-panel">
+      <div class="right-profile glass-card">
+        <img src="assets/images/profile.jpg" alt="Mostafa" class="right-profile-img" onerror="this.style.display='none'">
+        <div class="right-profile-info">
+          <div class="right-profile-name" data-field="firstname">Mostafa</div>
+          <div class="right-profile-title">Designer</div>
+        </div>
+      </div>
       <div class="quote-card glass-card">
         <span class="quote-icon">&ldquo;</span>
-        <p class="quote-text" data-field="quote">Great design is not just what it looks like, it's how it works.</p>
+        <p class="quote-text" data-field="quote"></p>
       </div>
       <div class="vibe-card glass-card">
         <div class="vibe-label">CURRENT VIBE</div>
         <div class="vibe-status"><span data-field="vibe">Creating</span><span class="vibe-cursor"></span></div>
-        <div class="focus-mode"><span class="focus-dot"></span> Focus Mode</div>
+        <div class="focus-mode"><span class="focus-dot"></span> Focus Mode ON</div>
       </div>
       <div class="now-playing-card glass-card">
         <div class="np-label">NOW PLAYING</div>
@@ -160,7 +194,7 @@
             <div class="np-title" data-field="np-title">Cyberpunk</div>
             <div class="np-artist" data-field="np-artist">Eternal Night</div>
           </div>
-          <button class="np-play" aria-label="Play"><i class="fas fa-play"></i></button>
+          <button class="np-play" aria-label="Play" id="np-play-btn"><i class="fas fa-play"></i></button>
         </div>
         <div class="np-waveform">
           <div class="np-bar"></div><div class="np-bar"></div><div class="np-bar"></div>
@@ -171,15 +205,10 @@
       <div class="panel-projects" data-mini-projects></div>
     </aside>
   </div>
-  <!-- Toast -->
+
   <div class="toast-container"></div>
-  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/particles.js"></script>
   <script src="js/main.js"></script>
-  <!-- Background Music -->
-  <audio id="bg-music" loop>
-    <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
-  </audio>
 </body>
 </html>
