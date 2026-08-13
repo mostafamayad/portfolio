@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | Mostafa Ayad Portfolio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">MA</div>
+      <h1 class="login-title">لوحة التحكم</h1>
+      <p class="login-sub">Mostafa Ayad Portfolio</p>
+      <input type="password" class="login-input" id="login-password" placeholder="••••••••" aria-label="Password">
+      <button class="login-btn" id="login-btn">دخول</button>
+      <div class="login-error" id="login-error">كلمة المرور غير صحيحة</div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="admin-dashboard">
+    <div class="admin-layout">
+      <!-- Admin Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="admin-logo">
+          <div class="admin-logo-mark">MA</div>
+          <div>
+            <div class="admin-logo-text">Mostafa Ayad</div>
+            <div class="admin-logo-sub">لوحة تحكم الموقع</div>
+          </div>
+        </div>
+        
+        <button class="admin-tab-btn active" data-tab="personal"><i class="fas fa-user"></i> بيانات شخصية</button>
+        <button class="admin-tab-btn" data-tab="social"><i class="fas fa-link"></i> روابط التواصل</button>
+        <button class="admin-tab-btn" data-tab="stats"><i class="fas fa-chart-bar"></i> الإحصائيات</button>
+        <button class="admin-tab-btn" data-tab="projects"><i class="fas fa-th"></i> المشاريع</button>
+        <button class="admin-tab-btn" data-tab="skills"><i class="fas fa-star"></i> المهارات</button>
+        <button class="admin-tab-btn" data-tab="services"><i class="fas fa-magic"></i> الخدمات</button>
+
+        <div class="admin-sidebar-footer">
+          <button class="admin-action-btn preview" id="btn-preview"><i class="fas fa-eye"></i> معاينة الموقع</button>
+          <button class="admin-action-btn reset" id="btn-reset"><i class="fas fa-undo"></i> استعادة الأصلي</button>
+          <button class="admin-action-btn logout" id="btn-logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+        </div>
+      </aside>
+
+      <!-- Admin Main -->
+      <main class="admin-main">
+        <div class="admin-panel-header">
+          <h2 class="admin-panel-title">إدارة المحتوى</h2>
+          <p class="admin-panel-sub">تعديل نصوص وبيانات الموقع. التغييرات تحفظ تلقائياً في المتصفح.</p>
+        </div>
+
+        <!-- Tab: Personal -->
+        <div class="tab-panel active" id="tab-personal">
+          <div class="form-section">
+            <h3 class="form-section-title">المعلومات الأساسية</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="field-name">الاسم</label>
+                <input class="form-input" id="field-name" type="text">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="field-title">اللقب المهني</label>
+                <input class="form-input" id="field-title" type="text">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="field-bio">نبذة تعريفية</label>
+              <textarea class="form-textarea" id="field-bio"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="field-email">الإيميل</label>
+                <input class="form-input" id="field-email" type="email">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="field-phone">رقم الهاتف</label>
+                <input class="form-input" id="field-phone" type="text" dir="ltr">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="field-location">المدينة</label>
+                <input class="form-input" id="field-location" type="text">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="field-university">الجامعة / الكلية</label>
+                <input class="form-input" id="field-university" type="text">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="field-quote">مقولة مفضلة (اقتباس)</label>
+                <textarea class="form-textarea" id="field-quote"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="field-vibe">الحالة الحالية (Vibe)</label>
+                <input class="form-input" id="field-vibe" type="text">
+              </div>
+            </div>
+            <button class="save-btn" data-save="personal"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <!-- Tab: Social Links -->
+        <div class="tab-panel" id="tab-social">
+          <div class="form-section">
+            <h3 class="form-section-title">روابط السوشيال ميديا</h3>
+            <div id="social-fields" class="form-row"></div>
+            <button class="save-btn" data-save="social"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <!-- Tab: Stats -->
+        <div class="tab-panel" id="tab-stats">
+          <div class="form-section">
+            <h3 class="form-section-title">إحصائيات الإنجازات</h3>
+            <div id="stats-fields"></div>
+            <button class="save-btn" data-save="stats"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <!-- Tab: Projects -->
+        <div class="tab-panel" id="tab-projects">
+          <div class="form-section">
+            <h3 class="form-section-title">معرض الأعمال والمشاريع</h3>
+            <div id="projects-fields"></div>
+            <button class="save-btn" data-save="projects"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <!-- Tab: Skills -->
+        <div class="tab-panel" id="tab-skills">
+          <div class="form-section">
+            <h3 class="form-section-title">المهارات والخبرات التقنية</h3>
+            <div id="skills-fields" class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;"></div>
+            <button class="save-btn" data-save="skills"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <!-- Tab: Services -->
+        <div class="tab-panel" id="tab-services">
+          <div class="form-section">
+            <h3 class="form-section-title">الخدمات المقدمة</h3>
+            <div id="services-fields"></div>
+            <button class="save-btn" data-save="services"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="admin-toast" id="admin-toast"></div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
