@@ -888,8 +888,8 @@ function initContactForm() {
       fail('Please fill in all required fields.');
       return;
     }
-    if (!fields.phone || phoneDigits.length < 7 || phoneDigits.length > 15) {
-      fail('Please enter a valid phone number.');
+    if (!/^(010|011|012|015)\d{8}$/.test(phoneDigits)) {
+      fail('Please enter a valid Egyptian phone number: 11 digits starting with 010, 011, 012, or 015.');
       return;
     }
 
