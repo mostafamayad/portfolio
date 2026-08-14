@@ -564,7 +564,7 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 @media (max-width: 600px) {
   .whatsapp-fab {
     right: 1rem;
-    bottom: 1rem;
+    bottom: calc(var(--bottom-nav-h, 62px) + env(safe-area-inset-bottom) + 0.4rem);
     width: 56px;
     height: 56px;
   }
