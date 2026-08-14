@@ -1025,8 +1025,30 @@ function initMagneticButtons() {
   });
 }
 
+// ── WhatsApp Floating Button ──────────────────────────────
+function initWhatsAppButton() {
+  if (document.getElementById('whatsapp-fab')) return;
+  const wa = document.createElement('a');
+  wa.id = 'whatsapp-fab';
+  wa.className = 'whatsapp-fab';
+  wa.href = 'https://wa.me/201032129702?text=';
+  wa.target = '_blank';
+  wa.rel = 'noopener noreferrer';
+  wa.setAttribute('aria-label', 'Chat on WhatsApp');
+  wa.innerHTML = `
+    <span class="wa-ring"></span>
+    <svg class="wa-icon" viewBox="0 0 32 32" fill="currentColor"><path d="M16.04 3C9.44 3 4 8.38 4 14.9c0 2.63.86 5.05 2.3 7L4.9 28l6.25-1.64a12 12 0 0 0 4.89 1.03C22.63 27.4 28 22 28 15.48 28 8.95 22.63 3 16.04 3zm0 22.1a9.9 9.9 0 0 1-5.06-1.38l-.36-.22-3.7.97 1-3.6-.24-.37A9.85 9.85 0 0 1 6.3 14.9c0-5.42 4.4-9.6 9.73-9.6 5.34 0 9.67 4.18 9.67 9.6S21.38 25.1 16.04 25.1zm5.2-7.2c-.28-.14-1.67-.82-1.93-.92-.26-.09-.45-.14-.64.14-.19.28-.73.92-.9 1.1-.16.19-.33.22-.61.07-.28-.14-1.18-.43-2.25-1.38-.83-.75-1.39-1.67-1.55-1.95-.16-.28-.02-.43.12-.57.13-.13.28-.33.42-.5.14-.16.19-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.64-1.55-.88-2.12-.23-.56-.47-.48-.64-.49-.16-.02-.35-.02-.53-.02-.19 0-.5.07-.75.34-.26.28-.99.97-.99 2.36s1.01 2.73 1.16 2.92c.14.19 2 3.05 4.84 4.28.68.29 1.2.47 1.61.6.68.22 1.29.19 1.78.12.54-.09 1.67-.69 1.9-1.35.24-.66.24-1.22.17-1.34-.07-.12-.26-.19-.54-.33z"/></svg>
+  `;
+  document.body.appendChild(wa);
+  setTimeout(() => wa.classList.add('wa-visible'), 80);
+  wa.addEventListener('pointerdown', () => wa.classList.add('wa-tapping'));
+  wa.addEventListener('pointerup', () => setTimeout(() => wa.classList.remove('wa-tapping'), 250));
+  wa.addEventListener('pointercancel', () => wa.classList.remove('wa-tapping'));
+}
+
 // Init page-specific
 window.addEventListener('load', () => {
+  initWhatsAppButton();
   initCustomSelects();
   initMagneticButtons();
   initFilters();
