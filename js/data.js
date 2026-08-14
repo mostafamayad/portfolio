@@ -132,16 +132,21 @@ const PORTFOLIO_DATA = {
 
 // ── Merge localStorage overrides ─────────────────────────
 function loadData() {
+  // Shared baseline baked into the site so every device (phone/desktop)
+  // reads the same covers, images and content.
+  const shared = (typeof SITE_DATA !== 'undefined' && SITE_DATA)
+    ? JSON.parse(JSON.stringify(SITE_DATA))
+    : null;
   const saved = localStorage.getItem('portfolio_data');
-  if (!saved) return PORTFOLIO_DATA;
-  try {
-    const override = JSON.parse(saved);
-    // Categories are structural (code-owned), always take the fresh defaults
-    delete override.categories;
-    return deepMerge(PORTFOLIO_DATA, override);
-  } catch(e) {
-    return PORTFOLIO_DATA;
+  let override = null;
+  if (saved) {
+    try { override = JSON.parse(saved); } catch(e) { override = null; }
   }
+  if (!override) override = shared;
+  if (!override) return PORTFOLIO_DATA;
+  // Categories are structural (code-owned), always take the fresh defaults
+  delete override.categories;
+  return deepMerge(PORTFOLIO_DATA, override);
 }
 
 function deepMerge(target, source) {

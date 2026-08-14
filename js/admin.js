@@ -18,11 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadAdminData() {
+  const base = (typeof SITE_DATA !== 'undefined' && SITE_DATA)
+    ? JSON.parse(JSON.stringify(SITE_DATA))
+    : PORTFOLIO_DATA;
   const saved = localStorage.getItem('portfolio_data');
-  try { adminData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(PORTFOLIO_DATA)); }
-  catch(e) { adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA)); }
-  if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(PORTFOLIO_DATA.projects));
-  if (!adminData.personal) adminData.personal = JSON.parse(JSON.stringify(PORTFOLIO_DATA.personal));
+  try { adminData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(base)); }
+  catch(e) { adminData = JSON.parse(JSON.stringify(base)); }
+  if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(base.projects));
+  if (!adminData.personal) adminData.personal = JSON.parse(JSON.stringify(base.personal));
   // Ensure old saved projects get optional fields without losing data
   if (typeof normalizeProjects === 'function') {
     adminData.projects = normalizeProjects(adminData.projects);
