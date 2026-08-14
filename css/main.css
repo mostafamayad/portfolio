@@ -1042,6 +1042,13 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 
 /* Mobile only: endless rightward marquee for the category cards */
 @media (max-width: 600px) {
+  .categories-section {
+    padding: 1.5rem 0;
+  }
+  .categories-header {
+    padding: 0 1.25rem;
+    margin-bottom: 1.25rem;
+  }
   .categories-scroll.is-marquee {
     overflow: hidden;
   }
@@ -1055,6 +1062,11 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
     display: flex;
     gap: 1rem;
     padding-right: 1rem;
+  }
+  .categories-scroll.is-marquee .cat-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
 @keyframes categories-marquee {
