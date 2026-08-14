@@ -879,12 +879,17 @@ function initContactForm() {
 
     const fields = {
       name: (form.elements['name'] || {}).value || '',
-      email: (form.elements['email'] || {}).value || '',
+      phone: (form.elements['phone'] || {}).value || '',
       service: (form.elements['service'] || {}).value || '',
       message: (form.elements['message'] || {}).value || ''
     };
-    if (!fields.name || !fields.email || !fields.message) {
+    const phoneDigits = fields.phone.replace(/[^\d]/g, '');
+    if (!fields.name || !fields.message) {
       fail('Please fill in all required fields.');
+      return;
+    }
+    if (!fields.phone || phoneDigits.length < 7 || phoneDigits.length > 15) {
+      fail('Please enter a valid phone number.');
       return;
     }
 
