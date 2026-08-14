@@ -144,8 +144,9 @@ function loadData() {
   }
   if (!override) override = shared;
   if (!override) return PORTFOLIO_DATA;
-  // Categories are structural (code-owned), always take the fresh defaults
+  // Categories and nowPlaying are structural (code-owned), always take the fresh defaults
   delete override.categories;
+  if (override.personal) delete override.personal.nowPlaying;
   return deepMerge(PORTFOLIO_DATA, override);
 }
 
