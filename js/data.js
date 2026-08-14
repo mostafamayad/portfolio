@@ -101,12 +101,12 @@ const PORTFOLIO_DATA = {
   ],
 
   categories: [
-    { id: 1, num: '01', title: 'GRAPHIC DESIGN',   subtitle: 'Brand Identity, Posters, Print', color: '#7c3aed' },
-    { id: 2, num: '02', title: 'SOCIAL MEDIA',     subtitle: 'Posts, Stories, Campaigns',       color: '#06b6d4' },
-    { id: 3, num: '03', title: 'MOTION GRAPHICS',  subtitle: 'Animation, VFX, Reels',           color: '#f59e0b' },
-    { id: 4, num: '04', title: 'UI/UX',            subtitle: 'Web & App Interfaces',            color: '#10b981' },
-    { id: 5, num: '05', title: 'VIDEO EDITING',    subtitle: 'Cinematic, Commercial',           color: '#ef4444' },
-    { id: 6, num: '06', title: 'IT SOLUTIONS',     subtitle: 'Network, Infrastructure',         color: '#8b5cf6' },
+    { id: 1, num: '01', title: 'BRANDING & IDENTITY', subtitle: 'Brand Identity, Logos, Print', color: '#7c3aed' },
+    { id: 2, num: '02', title: 'SOCIAL MEDIA',         subtitle: 'Posts, Stories, Campaigns',   color: '#06b6d4' },
+    { id: 3, num: '03', title: 'POSTER DESIGN',        subtitle: 'Posters, Prints, Campaigns',  color: '#f59e0b' },
+    { id: 4, num: '04', title: 'UI/UX',                subtitle: 'Web & App Interfaces',       color: '#10b981' },
+    { id: 5, num: '05', title: 'VIDEO EDITING',        subtitle: 'Cinematic, Commercial',      color: '#ef4444' },
+    { id: 6, num: '06', title: 'IT SOLUTIONS',         subtitle: 'Network, Infrastructure',    color: '#8b5cf6' },
   ],
 
   // Projects — image/video controlled from Admin Panel

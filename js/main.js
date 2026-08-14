@@ -486,7 +486,7 @@ function buildPage() {
 
   // Categories
   document.querySelectorAll('[data-categories]').forEach(container => {
-    const catKey = {1:'branding', 2:'social', 3:'motion', 4:'web', 5:'video', 6:'it'};
+    const catKey = {1:'branding', 2:'social', 3:'poster', 4:'web', 5:'video', 6:'it'};
     container.innerHTML = DATA.categories.map(cat => {
       const cover = (DATA.projects.find(p => p.category === catKey[cat.id] && p.cover) || {}).cover || '';
       const media = cover
@@ -732,7 +732,7 @@ function showToast(message, type = '') {
 
 // ── Emoji Helpers ─────────────────────────────────────────
 function getCatEmoji(id) {
-  const emojis = { 1:'📱', 2:'🖼️', 3:'✦', 4:'💻', 5:'📦', 6:'🎬' };
+  const emojis = { 1:'📱', 2:'🖼️', 3:'🖼️', 4:'💻', 5:'📦', 6:'🎬' };
   return emojis[id] || '✦';
 }
 
