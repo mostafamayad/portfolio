@@ -136,6 +136,8 @@ function loadData() {
   if (!saved) return PORTFOLIO_DATA;
   try {
     const override = JSON.parse(saved);
+    // Categories are structural (code-owned), always take the fresh defaults
+    delete override.categories;
     return deepMerge(PORTFOLIO_DATA, override);
   } catch(e) {
     return PORTFOLIO_DATA;
