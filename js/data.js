@@ -14,7 +14,7 @@ const PORTFOLIO_DATA = {
     available: true,
     quote: 'Great design is not just what it looks like — it\'s how it works and what it makes you feel.',
     currentVibe: 'Creating',
-    nowPlaying: { title: 'Cyberpunk Vibes', artist: 'Eternal Night' },
+    nowPlaying: { title: 'Alf Leila wa Leila', artist: 'Om Kalthoum' },
     // Images — controlled from admin panel
     profileImage: 'assets/images/profile.jpg',
     coverImage: 'assets/images/profile.jpg',
