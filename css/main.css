@@ -74,7 +74,7 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   position: fixed;
   top: 0; left: 0;
   pointer-events: none;
-  z-index: 99999;
+  z-index: 100002;
   transition: transform 0.1s ease, opacity 0.3s ease;
   transform: translate(-50%, -50%);
   mix-blend-mode: difference;
@@ -86,7 +86,7 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   position: fixed;
   top: 0; left: 0;
   pointer-events: none;
-  z-index: 99998;
+  z-index: 100001;
   transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
   transform: translate(-50%, -50%);
   opacity: 0.6;
@@ -2548,13 +2548,22 @@ html.light-mode .article-cta { background: rgba(124,58,237,0.1); }
 }
 .viewer-media { display: flex; align-items: center; justify-content: center; }
 .viewer-media img,
-.viewer-media video {
+.viewer-media video,
+.viewer-media iframe {
   max-width: 92vw;
   max-height: 76vh;
   object-fit: contain;
   border-radius: 12px;
   box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 50px var(--purple-glow);
   animation: viewerZoom 0.3s ease;
+}
+.viewer-media iframe {
+  width: 92vw;
+  max-width: 1100px;
+  height: calc(min(76vh, 92vw / 16 * 9));
+  aspect-ratio: 16/9;
+  border: 0;
+  background: #000;
 }
 .viewer-meta {
   margin-top: 1rem;
