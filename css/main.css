@@ -200,7 +200,6 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   color: var(--text-secondary);
   transition: var(--transition);
   position: relative;
-  overflow: hidden;
 }
 .nav-item a > * {
   position: relative;
@@ -209,6 +208,7 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 .nav-item a::before {
   content: '';
   position: absolute; inset: 0;
+  border-radius: var(--radius-sm);
   background: linear-gradient(90deg, rgba(124,58,237,0.35), transparent);
   opacity: 0;
   transition: var(--transition);
