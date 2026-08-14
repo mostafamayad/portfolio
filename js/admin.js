@@ -391,7 +391,7 @@ function populateProjects() {
       </div>
       <div class="form-group">
         <label class="form-label"><i class="fas fa-columns" style="margin-right:0.4rem;color:var(--purple-light)"></i>أقسام المعرض (سكشنز) — اختياري</label>
-        <input class="form-input" id="proj-sections-${i}" value="${(p.sections||[]).join('، ')}" placeholder="تصاميم المنتجات، الشعارات">
+        <input class="form-input" id="proj-sections-${i}" value="${(p.sections||[]).join('، ')}" placeholder="Product Designs، Logos">
         <div class="upload-hint">اكتب أسماء الأقسام مفصولة بفاصلة — الموقع هيعرض كل قسم كمعرض مستقل داخل صفحة المشروع، ومن القائمة المنسدلة تحت كل صورة بتختار إيه قسمها يحفظ فيه. لو سَبّت الحقل فاضي هيتعرض كله في قسم واحد (Gallery).</div>
       </div>
       <div class="featured-row">
