@@ -504,11 +504,46 @@ function buildPage() {
     }
     const track = container.querySelector('.marquee-track');
     if (track) {
-      const pause = (on) => track.style.animationPlayState = on ? 'paused' : 'running';
-      track.addEventListener('pointerdown', pause.bind(null, true));
-      track.addEventListener('pointerup', pause.bind(null, false));
-      track.addEventListener('pointercancel', pause.bind(null, false));
-      track.addEventListener('pointerleave', pause.bind(null, false));
+      let anim = null;
+      let dragging = false;
+      let startX = 0;
+      let startTime = 0;
+      let pxPerMs = 0;
+      const DURATION = 28000;
+      const getAnim = () => {
+        const list = track.getAnimations().filter(a => a.animationName === 'categories-marquee');
+        return list[0] || null;
+      };
+      const onChangeWeight = () => {
+        const desc = track.offsetWidth / 2;
+        return desc;
+      };
+      const onDown = (e) => {
+        anim = getAnim();
+        if (!anim) return;
+        pxPerMs = onChangeWeight() / DURATION;
+        dragging = true;
+        startX = e.clientX;
+        startTime = typeof anim.currentTime === 'number' ? anim.currentTime : 0;
+        anim.pause();
+        try { track.setPointerCapture(e.pointerId); } catch (_) {}
+      };
+      const onMove = (e) => {
+        if (!dragging || !anim) return;
+        const dx = e.clientX - startX;
+        const t = Math.min(Math.max(0, startTime - dx / pxPerMs), DURATION);
+        anim.currentTime = t;
+      };
+      const onEnd = () => {
+        if (!dragging) return;
+        dragging = false;
+        if (anim) { try { anim.play(); } catch (_) {} }
+        anim = null;
+      };
+      track.addEventListener('pointerdown', onDown);
+      track.addEventListener('pointermove', onMove);
+      track.addEventListener('pointerup', onEnd);
+      track.addEventListener('pointercancel', onEnd);
     }
     initRevealAnimations();
     container.querySelectorAll('.cat-card').forEach(card => {

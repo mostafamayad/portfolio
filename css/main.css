@@ -1057,7 +1057,13 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
     width: max-content;
     will-change: transform;
     animation: categories-marquee 28s linear infinite;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
   }
+  .categories-scroll.is-marquee .marquee-track:active { cursor: grabbing; }
+  .categories-scroll.is-marquee .marquee-track img { pointer-events: none; }
   .categories-scroll.is-marquee .marquee-group {
     display: flex;
     gap: 1rem;
