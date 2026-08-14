@@ -1363,42 +1363,55 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 }
 
 /* ── Homepage music card ────────────────────────────────── */
-.music-card-section { padding: 1.25rem 2.5rem 0; }
+.music-card-section { padding: 0.85rem 2.5rem 0; }
 .np-home-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
+  gap: 1rem;
   background: linear-gradient(120deg, rgba(124,58,237,0.14), rgba(6,182,212,0.08));
   border: 1px solid rgba(124,58,237,0.3);
-  padding: 1.15rem 1.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
 }
-.np-home-side { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 0; }
+.np-home-side {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+.np-home-side .np-label { display: none; }
+.np-home-card .np-content { gap: 0.5rem; }
+.np-home-card .np-thumb { width: 34px; height: 34px; font-size: 0.9rem; border-radius: 8px; }
+.np-home-card .np-title { font-size: 0.72rem; }
+.np-home-card .np-artist { font-size: 0.66rem; }
+.np-home-card .np-waveform { display: none; }
 .np-home-cta {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex-shrink: 0;
 }
 .np-play-big {
-  width: 52px; height: 52px;
-  font-size: 1.05rem;
-  border-width: 2px;
+  width: 34px; height: 34px;
+  font-size: 0.75rem;
+  border-width: 1.5px;
   background: rgba(124,58,237,0.18);
 }
 .np-hint {
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   color: var(--purple-light);
   white-space: nowrap;
   font-family: var(--font-mono);
   letter-spacing: 0.02em;
 }
-.np-home-card .np-waveform { margin-top: 0; }
 @media (max-width: 600px) {
-  .music-card-section { padding: 1rem 1rem 0; }
-  .np-home-card { flex-direction: column; align-items: flex-start; }
-  .np-home-cta { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+  .music-card-section { padding: 0.6rem 1rem 0; }
+  .np-home-card { flex-direction: row; align-items: center; padding: 0.45rem 0.8rem; }
+  .np-home-cta { flex-direction: row; align-items: center; gap: 0.5rem; }
 }
 html.light-mode .np-home-card { background: linear-gradient(120deg, rgba(124,58,237,0.08), rgba(6,182,212,0.06)); }
 
