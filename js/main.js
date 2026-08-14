@@ -502,6 +502,14 @@ function buildPage() {
     } else {
       container.innerHTML = cards;
     }
+    const track = container.querySelector('.marquee-track');
+    if (track) {
+      const pause = (on) => track.style.animationPlayState = on ? 'paused' : 'running';
+      track.addEventListener('pointerdown', pause.bind(null, true));
+      track.addEventListener('pointerup', pause.bind(null, false));
+      track.addEventListener('pointercancel', pause.bind(null, false));
+      track.addEventListener('pointerleave', pause.bind(null, false));
+    }
     initRevealAnimations();
     container.querySelectorAll('.cat-card').forEach(card => {
       card.addEventListener('click', () => {
