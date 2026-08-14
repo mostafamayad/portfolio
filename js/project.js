@@ -40,6 +40,7 @@ function extractDriveId(raw) {
     root.innerHTML = heroHTML(project) + bodyHTML(project, media);
     initGallerySpans(root, project);
     bindViewer(media);
+    initVideoCovers(root);
     if (typeof initRevealAnimations === 'function') initRevealAnimations();
   });
 
@@ -162,13 +163,13 @@ function extractDriveId(raw) {
   function itemFigure(m, i) {
     const open = `data-vw-index="${i}"`;
     if (m.type === 'youtube') {
-      return `<figure class="g-item g-video" ${open} data-type="youtube"><iframe src="https://www.youtube-nocookie.com/embed/${esc(m.src)}" title="video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure>`;
+      return `<figure class="g-item g-video" ${open} data-type="youtube" data-poster="https://i.ytimg.com/vi/${esc(m.src)}/hqdefault.jpg"><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     if (m.type === 'drive') {
-      return `<figure class="g-item g-video" ${open} data-type="video"><iframe src="https://drive.google.com/file/d/${esc(m.src)}/preview" title="video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure>`;
+      return `<figure class="g-item g-video" ${open} data-type="video" data-poster="https://drive.google.com/thumbnail?id=${esc(m.src)}&sz=w800"><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     if (m.type === 'video') {
-      return `<figure class="g-item g-video" ${open} data-type="video"><video src="${m.src}" preload="metadata" muted playsinline></video></figure>`;
+      return `<figure class="g-item g-video" ${open} data-type="video"><video src="${m.src}" preload="metadata" muted playsinline data-local-video></video><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     return `<figure class="g-item" ${open} data-type="image"><img src="${m.src}" alt="" loading="lazy" onload="window.__fitGalleryItem && window.__fitGalleryItem(this)"></figure>`;
   }
@@ -198,6 +199,38 @@ function extractDriveId(raw) {
           openViewer(idx);
         });
       });
+    });
+  }
+
+  // ── Video covers (show a thumbnail instead of a black player) ──
+  function initVideoCovers(root) {
+    // YouTube / Drive: load remote poster into the cover div
+    root.querySelectorAll('[data-cover][data-poster]').forEach(cover => {
+      const img = new Image();
+      img.onload = () => { cover.style.backgroundImage = `url("${cover.dataset.poster}")`; };
+      img.onerror = () => { cover.classList.add('g-video-cover-fallback'); };
+      img.src = cover.dataset.poster;
+    });
+
+    // Local video files: grab the first frame as the cover
+    root.querySelectorAll('video[data-local-video]').forEach(vid => {
+      const figure = vid.closest('.g-item');
+      const cover = figure ? figure.querySelector('[data-cover]') : null;
+      const setFrame = () => {
+        if (!cover || cover.style.backgroundImage) return;
+        try {
+          const c = document.createElement('canvas');
+          c.width = vid.videoWidth || 640;
+          c.height = vid.videoHeight || 360;
+          c.getContext('2d').drawImage(vid, 0, 0, c.width, c.height);
+          cover.style.backgroundImage = `url("${c.toDataURL('image/jpeg', 0.7)}")`;
+        } catch (e) {
+          cover.classList.add('g-video-cover-fallback');
+        }
+      };
+      vid.addEventListener('loadeddata', setFrame);
+      vid.addEventListener('seeked', setFrame);
+      vid.currentTime = 0.5;
     });
   }
 

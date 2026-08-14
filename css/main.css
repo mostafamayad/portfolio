@@ -2457,11 +2457,31 @@ html.light-mode .article-cta { background: rgba(124,58,237,0.1); }
   justify-content: center;
   font-size: 2.2rem;
   color: rgba(255,255,255,0.92);
-  background: rgba(8,8,16,0.35);
+  z-index: 3;
   pointer-events: none;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.6);
   transition: var(--transition);
 }
-.g-video:hover::after { background: rgba(124,58,237,0.25); }
+.g-video:hover::after { color: #fff; transform: scale(1.15); }
+.g-video-cover {
+  position: absolute; inset: 0;
+  z-index: 2;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block !important;
+}
+.g-video-cover::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(8,8,16,0.22);
+  transition: background 0.3s ease;
+}
+.g-video:hover .g-video-cover::after { background: rgba(8,8,16,0.05); }
+.g-video-cover-fallback {
+  background-image: linear-gradient(135deg, rgba(124,58,237,0.55), rgba(6,182,212,0.35)) !important;
+}
+.g-video video { z-index: 1; position: relative; }
 
 /* masonry */
 .gallery-masonry { column-count: 2; column-gap: 1.25rem; }
