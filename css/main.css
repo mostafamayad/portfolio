@@ -145,13 +145,14 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 .sidebar {
   position: sticky; top: 0;
   height: 100vh;
-  background: rgba(13,13,26,0.95);
-  border-right: 1px solid var(--border);
+  background: rgba(13,13,26,0.45);
+  border-right: 1px solid rgba(124,58,237,0.18);
   display: flex;
   flex-direction: column;
   padding: 2rem 1.5rem;
   z-index: 100;
-  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
 }
 
 .sidebar-logo {
@@ -2205,8 +2206,9 @@ html.light-mode .article-cta { background: rgba(124,58,237,0.1); }
     border-top: 1px solid var(--border);
     padding: 0 0.35rem calc(env(safe-area-inset-bottom) + 0.1rem);
     z-index: 200;
-    background: rgba(13,13,26,0.97);
-    backdrop-filter: blur(20px);
+    background: rgba(13,13,26,0.4);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
+    backdrop-filter: blur(26px) saturate(160%);
     box-shadow: 0 -10px 30px rgba(0,0,0,0.35);
   }
   .sidebar-logo, .sidebar-bottom { display: none; }
@@ -2714,13 +2716,14 @@ html.light-mode .glass-card {
 
 body.light-mode .sidebar,
 html.light-mode .sidebar {
-  background: rgba(255,255,255,0.82);
+  background: rgba(255,255,255,0.45);
+  border-right-color: rgba(124,58,237,0.2);
 }
 @media (max-width: 600px) {
   body.light-mode .sidebar,
   html.light-mode .sidebar {
-    background: rgba(255,255,255,0.96);
-    box-shadow: 0 -10px 30px rgba(15,23,42,0.08);
+    background: rgba(255,255,255,0.55);
+    box-shadow: 0 -10px 30px rgba(15,23,42,0.12);
   }
 }
 
