@@ -1,0 +1,42 @@
+<svg width="800" height="450" viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="cy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="pk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f472b6"/>
+      <stop offset="1" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="tr" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <circle cx="650" cy="90" r="140" fill="#7c3aed" opacity="0.14"/>
+  <circle cx="120" cy="380" r="150" fill="#06b6d4" opacity="0.1"/>
+
+  <g transform="translate(400 230)">
+    <!-- play button -->
+    <circle r="70" fill="none" stroke="url(#pg)" stroke-width="6"/>
+    <path d="M-16 -40 L 36 0 L -16 40 Z" fill="url(#cy)"/>
+    <!-- orbit ring -->
+    <ellipse rx="150" ry="52" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.6" transform="rotate(-12)"/>
+    <circle cx="152" cy="-27" r="12" fill="url(#pk)"/>
+    <circle cx="-152" cy="27" r="9" fill="url(#tr)"/>
+    <!-- small dots on ring -->
+    <circle cx="0" cy="-152" r="6" fill="#67e8f9" opacity="0.8"/>
+    <circle cx="0" cy="152" r="6" fill="#a78bfa" opacity="0.8"/>
+  </g>
+  <text x="400" y="60" text-anchor="middle" font-family="monospace" font-size="15" letter-spacing="6" fill="#a78bfa" opacity="0.8">MOTION GRAPHICS</text>
+  <text x="400" y="405" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#e2e8f0" opacity="0.75">MOTION IS THE FUTURE OF MARKETING</text>
+</svg>

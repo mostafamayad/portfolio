@@ -646,17 +646,94 @@ window.__fitProjectCover = function (img) {
 
 function buildBlog() {
   const posts = [
-    { tag: 'Design Tips', title: 'The Psychology of Color in Brand Design', excerpt: 'How colors shape perception and influence purchasing decisions in brand identity.', date: 'Aug 2024', readTime: '5 min', icon: 'fa-solid fa-palette' },
-    { tag: 'Workflow', title: 'My Design Process: From Brief to Final Artwork', excerpt: 'A behind-the-scenes look at how I approach every new design project.', date: 'Jul 2024', readTime: '8 min', icon: 'fa-solid fa-wand-magic-sparkles' },
-    { tag: 'Motion', title: 'Why Motion Graphics Are the Future of Marketing', excerpt: 'Animated content outperforms static in every metric. Here\'s why.', date: 'Jun 2024', readTime: '6 min', icon: 'fa-solid fa-clapperboard' },
-    { tag: 'UI/UX', title: 'Dark Mode Design: Best Practices & Common Mistakes', excerpt: 'Everything you need to know to design stunning dark interfaces.', date: 'May 2024', readTime: '7 min', icon: 'fa-solid fa-moon' },
+    {
+      tag: 'Design Tips',
+      title: 'The Psychology of Color in Brand Design',
+      excerpt: 'How colors shape perception and influence purchasing decisions in brand identity.',
+      date: 'Aug 2024',
+      readTime: '5 min',
+      image: 'assets/images/blog/blog-color.svg',
+      intro: 'Color is the first thing a customer notices about your brand — and the last thing they forget. In under seven seconds, people form a first impression of your product, and up to 90% of that impression is based on color alone. Here is how to use color psychology with real intent rather than guesswork.',
+      sections: [
+        { heading: '1. Start from the feeling, not the palette',
+          body: 'Before picking any hex code, answer one question: what should someone feel when they touch your brand? Trust, excitement, calm, urgency? Every color family sends a subconscious signal — red accelerates the heart rate and creates urgency, blue lowers it and builds trust, yellow boosts optimism but fatigues the eye in large doses. Write down the emotion first, then let it drive every other choice.' },
+        { heading: '2. Use the 60-30-10 rule',
+          body: 'A professional palette is rarely balanced equally. Use 60% of a dominant neutral, 30% of a supporting secondary color, and 10% of a high-contrast accent. This structure gives the eye a resting place, keeps the brand breathing, and makes the accent color feel intentional instead of loud. Applied to both web and print, it prevents muddy, noisy results.' },
+        { heading: '3. Respect context and culture',
+          body: 'White reads as purity in the West but mourning in parts of Asia. Green means nature in some markets and finance in others. If your brand ships globally, research cultural associations before locking a palette. Also test your colors in context: against dark and light backgrounds, in small badges, and at a glance on a smartphone — hues shift dramatically with size and background.' },
+        { heading: '4. Verify accessibility before launch',
+          body: 'Two colors that look stunning side by side can fail the contrast test for color-blind users or low-vision readers. Check your text-on-background combinations against WCAG AA (4.5:1 for body text, 3:1 for large text). Free tools like WebAIM\'s contrast checker make this a two-minute habit instead of an afterthought.' },
+      ],
+      cta: 'Rule of thumb: your accent color should do one job — nothing more. Remove every decorative use of it until a single meaningful interaction carries it.' },
+    {
+      tag: 'Workflow',
+      title: 'My Design Process: From Brief to Final Artwork',
+      excerpt: 'A behind-the-scenes look at how I approach every new design project.',
+      date: 'Jul 2024',
+      readTime: '8 min',
+      image: 'assets/images/blog/blog-process.svg',
+      intro: 'A good designer hides their process; a great designer controls it. Over years of client work, I have distilled my workflow into five stages that reduce revisions, protect deadlines, and keep creativity from burning out. Here is the exact pipeline I use for every project, from the first call to the final export.',
+      sections: [
+        { heading: '1. Discover — understand before you draw',
+          body: 'The first deliverable of any project is never a sketch; it is a question list. Who is the audience? What behavior do we actually want to change? Who are the two strongest competitors? Spend the discovery phase interviewing, not designing. Projects fail far more often because of a misunderstood brief than a lack of talent.' },
+        { heading: '2. Define — write the goal down',
+          body: 'Turn the discovery answers into a one-sentence creative brief: "Increase online demo sign-ups among mid-size agencies by 30%." A measurable target changes every decision downstream — it tells you whether a layout works and gives the client a fair way to judge results instead of taste.' },
+        { heading: '3. Diverge — explore multiple directions',
+          body: 'Never present your only idea. Create two or three radically different directions: a safe one, a surprising one, and a compromise. Exploring even rejected directions sharpens the final one, and clients feel genuinely involved when they choose between options rather than accept or reject a single concept.' },
+        { heading: '4. Refine — iterate on one winner',
+          body: 'Once a direction is chosen, stop exploring and start obsessing. Tighten spacing, align the grid, test type scale, review hierarchy at every breakpoint. Professional craft lives in the second 20% of the work — the polish most portfolios never show because it is the part that costs real hours.' },
+        { heading: '5. Deliver — package for the real world',
+          body: 'Final delivery is a file, but handoff is an experience. Provide organized folders, source files, exported assets, font licenses, and a short written rationale for each decision. A designer who documents their work saves the client from re-opening a year later with "can we try another blue?"' },
+      ],
+      cta: 'Steal this rule: never deliver a design without a one-paragraph rationale. It teaches clients to judge the problem you solved, not the pixels you moved.' },
+    {
+      tag: 'Motion',
+      title: 'Why Motion Graphics Are the Future of Marketing',
+      excerpt: 'Animated content outperforms static in every metric. Here\'s why.',
+      date: 'Jun 2024',
+      readTime: '6 min',
+      image: 'assets/images/blog/blog-motion.svg',
+      intro: 'Attention spans are shrinking while feeds keep scrolling. Motion is the only format that interrupts the scroll without shouting. Research consistently shows animated posts out-perform static images on reach, engagement, and recall. But the real reason is neuroscience, not hype: our vision system is wired to detect movement first.',
+      sections: [
+        { heading: '1. Motion earns attention for free',
+          body: 'Before the brain processes shape, color, or text, it flags motion as important. That is why an animated thumbnail stops the thumb while a static image gets ignored. The practical takeaway: put your product, logo, or key message in motion for the first second of every ad — that is the moment you win or lose the impression.' },
+        { heading: '2. Richer stories, shorter runway',
+          body: 'A 15-minute video requires a viewer to commit; a 6-second loop only asks them to glance. Motion lets you compress a transformation — before/after, build-up/destruct, problem/solution — into half a second of visual storytelling. Formats like loops and short-form video work because they respect the viewer\'s time budget.' },
+        { heading: '3. A measurable lift across the funnel',
+          body: 'Across ad platforms, video and motion units routinely drive higher CTRs and lower cost-per-action than identical static campaigns. Add sound design and callback hooks and the effect compounds. Even at the bottom of the funnel, product demos in motion reduce perceived risk and shorten the decision time.' },
+        { heading: '4. The design principles that matter',
+          body: 'Good motion is not fancy; it is intentional. Respect easing (never linear) so movement feels alive, keep animations under 3 seconds for loops, and follow the 12 principles of animation that translate directly to UX. Motion should guide attention toward the CTA — if it competes with it, cut it.' },
+      ],
+      cta: 'The motion test: if your animation runs on mute, at 0.5x speed, in a 120px feed thumbnail, and still communicates the point — ship it.' },
+    {
+      tag: 'UI/UX',
+      title: 'Dark Mode Design: Best Practices & Common Mistakes',
+      excerpt: 'Everything you need to know to design stunning dark interfaces.',
+      date: 'May 2024',
+      readTime: '7 min',
+      image: 'assets/images/blog/blog-darkmode.svg',
+      intro: 'Dark mode is no longer a feature; it is an expectation. Around 80% of users prefer it when available, and for creatives, dark UIs reduce eye strain and let work stand in the spotlight. But a dark theme is not simply a light theme with inverted colors — it demands its own contrast logic, and most implementations get this wrong.',
+      sections: [
+        { heading: '1. Never use pure black',
+          body: 'Pure #000 backgrounds cause intense halation — edges glow and text shimmers. Professional dark interfaces use "off-black" surfaces, typically #121212 to #1E1E1E with subtle elevation steps. Different surfaces (cards, modals, sheets) need slightly lighter backgrounds so depth reads without heavy borders.' },
+        { heading: '2. Flip the contrast math',
+          body: 'On a light background you lighten text; on dark you must lighten it too — but boost the difference. Body text should sit at a minimum of 10% luminance above the surface (e.g. #E0E0E0 on #121212), while muted text drops to around 60% of body value. Never use the exact same text color from light mode; it will disappear.' },
+        { heading: '3. Saturated colors burn on dark',
+          body: 'Strong, vivid hues that look fine on white can feel aggressive or glow oddly on dark surfaces, especially purple and cyan. Slightly desaturate accents for dark mode, and soften white overlays on images. Simulating light sources on dark UI is also powerful: shadows soften, glows become the new shadow.' },
+        { heading: '4. Guard against the "fake dark" trap',
+          body: 'The laziest mistake is simply toggling a CSS filter or flipping variables without retouching imagery, borders, and shadows. Dark mode is a redesign. Check every state: hover, focus, disabled, error, selection, and scrollbars. If any screenshot leaks a white paper icon or a hard black shadow, users notice instantly.' },
+        { heading: '5. Respect the system',
+          body: 'Follow the OS preference by default, but always let the user override it. Persist their choice, and animate the transition gently — a crisp crossfade of 200-300ms feels premium. Offer dark mode within your own content too: here at this portfolio, the theme toggle respects your saved choice across every page.' },
+      ],
+      cta: 'Dark mode audit checklist: backgrounds elevated, text above 10% luminance, accents desaturated, all states checked, toggle persisted. Five items, zero excuses.' },
   ];
 
   document.querySelectorAll('[data-blog]').forEach(container => {
     container.innerHTML = posts.map((p, i) => `
-      <div class="blog-card reveal" id="blog-${i+1}">
-        <div class="blog-card-img-placeholder" style="background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.1));">
-          <i class="${p.icon}" style="font-size:3rem;color:var(--purple-light)"></i>
+      <article class="blog-card reveal" id="blog-${i+1}" data-article="${i}">
+        <div class="blog-card-media">
+          <img src="${p.image}" alt="${p.title}" class="blog-card-img" loading="lazy">
+          <div class="blog-card-overlay"><span>READ ARTICLE</span></div>
         </div>
         <div class="blog-card-body">
           <div class="blog-tag">${p.tag}</div>
@@ -667,10 +744,66 @@ function buildBlog() {
           <span>${p.date}</span>
           <span>${p.readTime} read</span>
         </div>
-      </div>
+      </article>
     `).join('');
+
+    container.querySelectorAll('.blog-card').forEach(card => {
+      card.addEventListener('click', () => openArticle(posts[parseInt(card.dataset.article)]));
+    });
+
     initRevealAnimations();
   });
+}
+
+// ── Article Reader (full post modal) ─────────────────────
+let articleOverlay = null;
+
+function openArticle(post) {
+  if (!articleOverlay) {
+    articleOverlay = document.createElement('div');
+    articleOverlay.className = 'article-modal';
+    articleOverlay.innerHTML = `
+      <div class="article-backdrop"></div>
+      <div class="article-panel" role="dialog" aria-modal="true">
+        <button class="article-close" aria-label="Close article"><i class="fas fa-times"></i></button>
+        <div class="article-hero"><img alt="" class="article-hero-img"></div>
+        <div class="article-content"></div>
+      </div>`;
+    document.body.appendChild(articleOverlay);
+    articleOverlay.addEventListener('click', (e) => {
+      if (e.target.closest('.article-close') || e.target.classList.contains('article-backdrop')) closeArticle();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && articleOverlay && articleOverlay.classList.contains('open')) closeArticle();
+    });
+  }
+
+  const heroImg = articleOverlay.querySelector('.article-hero-img');
+  heroImg.src = post.image;
+  heroImg.alt = post.title;
+
+  const content = articleOverlay.querySelector('.article-content');
+  content.innerHTML = `
+    <div class="article-tag">${post.tag} — ${post.readTime} read</div>
+    <h2 class="article-title">${post.title}</h2>
+    <p class="article-intro">${post.intro}</p>
+    ${post.sections.map(s => `
+      <div class="article-section">
+        <h3>${s.heading}</h3>
+        <p>${s.body}</p>
+      </div>`).join('')}
+    <div class="article-cta">${post.cta}</div>
+  `;
+
+  articleOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  articleOverlay.querySelector('.article-panel').scrollTop = 0;
+}
+
+function closeArticle() {
+  if (!articleOverlay) return;
+  articleOverlay.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ── Filter Works ─────────────────────────────────────────

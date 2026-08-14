@@ -1,0 +1,36 @@
+<svg width="800" height="450" viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f472b6"/>
+      <stop offset="1" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <circle cx="700" cy="60" r="140" fill="#7c3aed" opacity="0.15"/>
+  <circle cx="80" cy="400" r="160" fill="#06b6d4" opacity="0.1"/>
+  <g transform="translate(400 185)">
+    <rect x="-220" y="-60" width="70" height="120" rx="14" fill="url(#g1)"/>
+    <rect x="-135" y="-93" width="70" height="186" rx="14" fill="url(#g2)"/>
+    <rect x="-50" y="-45" width="70" height="90" rx="14" fill="url(#g3)"/>
+    <rect x="35" y="-105" width="70" height="210" rx="14" fill="url(#g4)"/>
+    <rect x="120" y="-70" width="70" height="140" rx="14" fill="#a78bfa" opacity="0.9"/>
+  </g>
+  <text x="400" y="60" text-anchor="middle" font-family="monospace" font-size="15" letter-spacing="6" fill="#a78bfa" opacity="0.8">COLOR PSYCHOLOGY</text>
+  <text x="400" y="405" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#e2e8f0" opacity="0.75">THE PSYCHOLOGY OF COLOR IN BRAND DESIGN</text>
+</svg>

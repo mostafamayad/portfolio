@@ -412,7 +412,7 @@ function populateProjects() {
         </div>
         <div style="margin-top:0.75rem;border-top:1px dashed var(--border);padding-top:0.75rem">
           <label class="form-label" style="font-size:0.85rem"><i class="fas fa-video" style="margin-right:0.4rem;color:var(--purple-light)"></i>فيديو كامل بالجودة الأصلية (مرفوع على YouTube أو كملف داخل الموقع)</label>
-          <input type="text" id="proj-video-link-${i}" class="form-input" style="margin-bottom:0.4rem" placeholder="https://www.youtube.com/watch?v=... أو assets/videos/my-clip.mp4">
+          <input type="text" id="proj-video-link-${i}" class="form-input" style="margin-bottom:0.4rem" placeholder="رابط YouTube أو Google Drive أو assets/videos/my-clip.mp4">
           <button class="add-btn" style="width:auto;padding:0.5rem 1rem" onclick="addVideoLink(${i})"><i class="fas fa-link"></i> إضافة الفيديو</button>
           <div class="upload-hint">المتصفح لا يتحمل حفظ فيديو كامل، فالرابط أو الملف داخل الموقع مش بيمتنزع على المساحة — والجودة تعليها من مشغل الفيديو.</div>
         </div>
@@ -437,6 +437,12 @@ function renderMediaGallery(media, projIdx) {
       if (m.type === 'youtube') {
         return `<div style="position:relative;width:120px;">
           <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
+        </div>`;
+      }
+      if (m.type === 'drive') {
+        return `<div style="position:relative;width:120px;">
+          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(34,211,238,0.35),rgba(16,185,129,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">Drive</span></div>
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
@@ -466,8 +472,16 @@ window.addVideoLink = function(projIdx) {
   const yt = youtubeVideoId(raw);
   if (yt) {
     adminData.projects[projIdx].media.push({ src: yt, type: 'youtube', name: 'YouTube video' });
+    showAdminToast('تم إضافة الفيديو من YouTube');
   } else {
-    adminData.projects[projIdx].media.push({ src: raw, type: 'video', name: raw.split('/').pop() });
+    const gd = googleDriveId(raw);
+    if (gd) {
+      adminData.projects[projIdx].media.push({ src: gd, type: 'drive', name: 'Google Drive video' });
+      showAdminToast('تم إضافة الفيديو من Google Drive');
+    } else {
+      adminData.projects[projIdx].media.push({ src: raw, type: 'video', name: raw.split('/').pop() });
+      showAdminToast('تم إضافة الفيديو (ملف داخل الموقع)');
+    }
   }
   input.value = '';
   const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
@@ -479,6 +493,14 @@ window.addVideoLink = function(projIdx) {
 function youtubeVideoId(url) {
   const m = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/.exec(url);
   return m ? m[1] : null;
+}
+
+function googleDriveId(url) {
+  const idRegex = /(?:drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=|uc\?export=download[^#]*id=))([\w-]{20,})/;
+  const m = idRegex.exec(url);
+  if (m) return m[1];
+  const q = /[?&]id=([\w-]{20,})/.exec(url);
+  return q ? q[1] : null;
 }
 
 window.handleProjectCover = async function(projIdx, input) {
