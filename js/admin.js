@@ -35,13 +35,13 @@ function loadAdminData() {
 function saveAll() {
   try {
     localStorage.setItem('portfolio_data', JSON.stringify(adminData));
-    showAdminToast('✓ تم الحفظ بنجاح', 'success');
+    showAdminToast('تم الحفظ بنجاح', 'success');
   } catch (e) {
     console.error('Save failed', e);
     showAdminToast(
       (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'))
-        ? '⚠️ مساحة المتصفح ممتلئة — ارفع صور أصغر أو احذف مشاريع'
-        : '⚠️ لم يتم الحفظ — حاول مرة أخرى',
+        ? 'مساحة المتصفح ممتلئة — ارفع صور أصغر أو احذف مشاريع'
+        : 'لم يتم الحفظ — حاول مرة أخرى',
       'error'
     );
   }
@@ -196,7 +196,7 @@ function setupImageUpload(inputId, previewId, callback) {
     if (dataUrl) {
       callback(dataUrl);
       renderCurrentImage(previewId, dataUrl);
-      showAdminToast('✓ تم رفع الصورة، اضغط حفظ لتأكيد التغييرات');
+      showAdminToast('تم رفع الصورة، اضغط حفظ لتأكيد التغييرات');
     }
   });
 }
@@ -295,7 +295,7 @@ function populateStats() {
   const stats = adminData.stats || PORTFOLIO_DATA.stats;
   container.innerHTML = stats.map((s, i) => `
     <div class="item-card">
-      <div class="item-card-header"><span class="item-num">${s.icon} الإحصائية ${i+1}</span></div>
+      <div class="item-card-header"><span class="item-num"><i class="${s.icon}" style="margin-right:0.4rem;color:var(--purple-light)"></i>الإحصائية ${i+1}</span></div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">القيمة</label>
@@ -322,7 +322,7 @@ function populateProjects() {
   container.innerHTML = projList.map((p, i) => `
     <div class="item-card project-card" id="proj-card-${i}">
       <div class="item-card-header">
-        <span class="item-num">📁 مشروع ${i+1} — ${p.title}</span>
+        <span class="item-num"><i class="fas fa-folder-open" style="margin-right:0.4rem;color:var(--purple-light)"></i>مشروع ${i+1} — ${p.title}</span>
         <button class="item-del-btn" onclick="deleteProject(${i})" title="حذف المشروع"><i class="fas fa-trash"></i></button>
       </div>
 
@@ -387,7 +387,7 @@ function populateProjects() {
 
       <!-- Cover Image Upload -->
       <div class="form-group">
-        <label class="form-label">🖼️ صورة الغلاف (Cover)</label>
+        <label class="form-label"><i class="fas fa-image" style="margin-right:0.4rem;color:var(--purple-light)"></i>صورة الغلاف (Cover)</label>
         <div class="upload-area" onclick="document.getElementById('proj-cover-upload-${i}').click()">
           <input type="file" id="proj-cover-upload-${i}" accept="image/*" style="display:none" onchange="handleProjectCover(${i}, this)">
           <div id="proj-cover-preview-${i}" class="upload-preview">
@@ -398,7 +398,7 @@ function populateProjects() {
 
       <!-- Media Gallery Upload -->
       <div class="form-group">
-        <label class="form-label">📂 معرض الصور والفيديوهات (يمكن إضافة متعدد)</label>
+        <label class="form-label"><i class="fas fa-layer-group" style="margin-right:0.4rem;color:var(--purple-light)"></i>معرض الصور والفيديوهات (يمكن إضافة متعدد)</label>
         <div class="upload-area" onclick="document.getElementById('proj-media-upload-${i}').click()">
           <input type="file" id="proj-media-upload-${i}" accept="image/*,video/*" multiple style="display:none" onchange="handleProjectMedia(${i}, this)">
           <div class="upload-placeholder small">
@@ -411,7 +411,7 @@ function populateProjects() {
           ${renderMediaGallery(p.media || [], i)}
         </div>
         <div style="margin-top:0.75rem;border-top:1px dashed var(--border);padding-top:0.75rem">
-          <label class="form-label" style="font-size:0.85rem">🎬 فيديو كامل بالجودة الأصلية (مرفوع على YouTube أو كملف داخل الموقع)</label>
+          <label class="form-label" style="font-size:0.85rem"><i class="fas fa-video" style="margin-right:0.4rem;color:var(--purple-light)"></i>فيديو كامل بالجودة الأصلية (مرفوع على YouTube أو كملف داخل الموقع)</label>
           <input type="text" id="proj-video-link-${i}" class="form-input" style="margin-bottom:0.4rem" placeholder="https://www.youtube.com/watch?v=... أو assets/videos/my-clip.mp4">
           <button class="add-btn" style="width:auto;padding:0.5rem 1rem" onclick="addVideoLink(${i})"><i class="fas fa-link"></i> إضافة الفيديو</button>
           <div class="upload-hint">المتصفح لا يتحمل حفظ فيديو كامل، فالرابط أو الملف داخل الموقع مش بيمتنزع على المساحة — والجودة تعليها من مشغل الفيديو.</div>
@@ -437,18 +437,18 @@ function renderMediaGallery(media, projIdx) {
       if (m.type === 'youtube') {
         return `<div style="position:relative;width:120px;">
           <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
-          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
       if (m.type === 'video') {
         return `<div style="position:relative;width:120px;">
           <video src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)"></video>
-          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       } else {
         return `<div style="position:relative;width:120px;">
           <img src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)">
-          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
     }).join('') + `</div>`;
@@ -459,7 +459,7 @@ window.addVideoLink = function(projIdx) {
   if (!input) return;
   const raw = (input.value || '').trim();
   if (!raw) {
-    showAdminToast('⚠️ اكتب رابط الفيديو أولاً');
+    showAdminToast('اكتب رابط الفيديو أولاً');
     return;
   }
   if (!adminData.projects[projIdx].media) adminData.projects[projIdx].media = [];
@@ -473,7 +473,7 @@ window.addVideoLink = function(projIdx) {
   const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
   if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
   saveAll();
-  showAdminToast('✓ تم إضافة الفيديو');
+  showAdminToast('تم إضافة الفيديو');
 };
 
 function youtubeVideoId(url) {
@@ -490,7 +490,7 @@ window.handleProjectCover = async function(projIdx, input) {
   const preview = document.getElementById(`proj-cover-preview-${projIdx}`);
   if (preview) preview.innerHTML = `<img src="${dataUrl}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover">`;
   saveAll();
-  showAdminToast('✓ تم رفع وحفظ صورة الغلاف');
+  showAdminToast('تم رفع وحفظ صورة الغلاف');
 };
 
 window.handleProjectMedia = async function(projIdx, input) {
@@ -509,7 +509,7 @@ window.handleProjectMedia = async function(projIdx, input) {
       const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
       if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
       saveAll();
-      showAdminToast(`✓ تم رفع وحفظ ${files.length} ملف`);
+      showAdminToast(`تم رفع وحفظ ${files.length} ملف`);
     }
   }
 };
@@ -601,7 +601,7 @@ function populateServices() {
   const services = adminData.services || PORTFOLIO_DATA.services;
   container.innerHTML = services.map((s, i) => `
     <div class="item-card">
-      <div class="item-card-header"><span class="item-num">${s.icon} خدمة ${i+1}</span></div>
+      <div class="item-card-header"><span class="item-num"><i class="${s.icon}" style="margin-right:0.4rem;color:var(--purple-light)"></i>خدمة ${i+1}</span></div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">اسم الخدمة</label>
@@ -643,7 +643,7 @@ function initReset() {
       localStorage.removeItem('portfolio_data');
       adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA));
       populateAllForms();
-      showAdminToast('✓ تم إعادة الضبط', 'success');
+      showAdminToast('تم إعادة الضبط', 'success');
     }
   });
 }
@@ -669,7 +669,7 @@ function initExportImport() {
       document.body.appendChild(a);
       a.click();
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
-      showAdminToast('✓ تم تنزيل بيانات الموقع');
+      showAdminToast('تم تنزيل بيانات الموقع');
     });
   }
 
@@ -691,13 +691,13 @@ function initExportImport() {
           adminData = parsed;
           saveAll();
           populateAllForms();
-          showAdminToast('✓ تم استيراد البيانات وحفظها بنجاح', 'success');
+          showAdminToast('تم استيراد البيانات وحفظها بنجاح', 'success');
         } catch (err) {
           console.error('Import failed', err);
-          showAdminToast('⚠️ الملف غير صالح — اختر ملف JSON صحيح', 'error');
+          showAdminToast('الملف غير صالح — اختر ملف JSON صحيح', 'error');
         }
       };
-      reader.onerror = () => showAdminToast('⚠️ تعذر قراءة الملف', 'error');
+      reader.onerror = () => showAdminToast('تعذر قراءة الملف', 'error');
       reader.readAsText(file);
     });
   }
@@ -707,7 +707,11 @@ function initExportImport() {
 function showAdminToast(msg, type = '') {
   const toast = document.getElementById('admin-toast');
   if (!toast) return;
-  toast.textContent = msg;
+  const icon = type === 'error'
+    ? '<i class="fas fa-exclamation-circle" style="margin-right:0.45rem;color:#f87171"></i>'
+    : '<i class="fas fa-check-circle" style="margin-right:0.45rem;color:#4ade80"></i>';
+  const clean = msg.replace(/\u2713/g, '').replace(/\u26A0\uFE0F?/g, '').trim();
+  toast.innerHTML = icon + clean;
   toast.className = `admin-toast ${type} show`;
   setTimeout(() => toast.classList.remove('show'), 3000);
 }

@@ -12,6 +12,72 @@
   opacity: 0.5;
 }
 
+/* ── COSMIC BACKGROUND — subtle professional line-art icons ─ */
+.cosmos {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.cosmos-icon {
+  position: absolute;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: cosmosAppear 1.4s ease forwards;
+}
+.cosmos-icon svg { display: block; overflow: visible; }
+
+/* planets (dark mode) */
+body:not(.light-mode) .cosmos-icon { mix-blend-mode: screen; }
+.ci-planet-1 { top: 10%; left: 7%;  width: 110px; animation: cosmosAppear 1.4s ease .3s forwards, planetFloat 34s ease-in-out infinite .3s; }
+.ci-planet-2 { top: 62%; right: 4%; width: 84px;  animation: cosmosAppear 1.4s ease 1.8s forwards, planetFloat 42s ease-in-out infinite 1.8s; }
+.ci-planet-3 { top: 28%; right: 13%; width: 56px; animation: cosmosAppear 1.4s ease 3.2s forwards, planetFloat 30s ease-in-out infinite 3.2s; }
+.ci-planet-4 { top: 78%; left: 32%; width: 70px; animation: cosmosAppear 1.4s ease 4.4s forwards, planetFloat 38s ease-in-out infinite 4.4s; }
+.ci-star-1 { top: 7%;  right: 16%; width: 40px; animation: cosmosAppear 1.4s ease 1s forwards, starTwinkle 5s ease-in-out infinite 1s; }
+.ci-star-2 { top: 50%; left: 3%;  width: 30px; animation: cosmosAppear 1.4s ease 2.2s forwards, starTwinkle 5.8s ease-in-out infinite 2.2s; }
+.ci-star-3 { top: 82%; right: 30%; width: 34px; animation: cosmosAppear 1.4s ease 3.8s forwards, starTwinkle 4.6s ease-in-out infinite 3.8s; }
+.ci-star-4 { top: 14%; left: 34%; width: 22px; animation: cosmosAppear 1.4s ease 2.8s forwards, starTwinkle 6.4s ease-in-out infinite 2.8s; }
+.ci-star-5 { top: 60%; right: 40%; width: 24px; animation: cosmosAppear 1.4s ease 5s forwards, starTwinkle 5.2s ease-in-out infinite 5s; }
+.ci-star-6 { bottom: 6%; left: 12%; width: 26px; animation: cosmosAppear 1.4s ease 5.6s forwards, starTwinkle 6s ease-in-out infinite 5.6s; }
+.ci-moon-1 { top: 70%; left: 15%; width: 62px; animation: cosmosAppear 1.4s ease 1.3s forwards, moonFloat 30s ease-in-out infinite 1.3s; }
+.ci-moon-2 { top: 42%; right: 27%; width: 44px; animation: cosmosAppear 1.4s ease 4s forwards, moonFloat 36s ease-in-out infinite 4s; }
+.ci-ring-1 { top: 22%; left: 52%; width: 70px; animation: cosmosAppear 1.4s ease 1.6s forwards, ringFloat 40s ease-in-out infinite 1.6s; }
+.ci-ring-2 { top: 82%; right: 42%; width: 48px; animation: cosmosAppear 1.4s ease 4.8s forwards, ringFloat 34s ease-in-out infinite 4.8s; }
+.ci-dot-1 { top: 24%; left: 8%; width: 10px;  animation: cosmosAppear 1.4s ease 2.4s forwards, dotPulse 7s ease-in-out infinite 2.4s; }
+.ci-dot-2 { top: 8%; left: 26%; width: 8px;   animation: cosmosAppear 1.4s ease 3s forwards, dotPulse 8s ease-in-out infinite 3s; }
+.ci-dot-3 { top: 90%; right: 18%; width: 12px; animation: cosmosAppear 1.4s ease 4.2s forwards, dotPulse 6s ease-in-out infinite 4.2s; }
+.ci-dot-4 { top: 58%; left: 40%; width: 9px;  animation: cosmosAppear 1.4s ease 5.4s forwards, dotPulse 7.5s ease-in-out infinite 5.4s; }
+.ci-dot-5 { bottom: 10%; left: 55%; width: 7px; animation: cosmosAppear 1.4s ease 6s forwards, dotPulse 8.5s ease-in-out infinite 6s; }
+
+@keyframes cosmosAppear { to { opacity: 1; } }
+
+@keyframes planetFloat {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(18px, -24px) rotate(3deg); }
+  50% { transform: translate(-14px, -40px) rotate(-3deg); }
+  75% { transform: translate(-24px, -12px) rotate(2deg); }
+}
+@keyframes starTwinkle {
+  0%, 100% { opacity: .55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.22); }
+}
+@keyframes moonFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-32px) rotate(4deg); }
+}
+@keyframes ringFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-28px) rotate(8deg); }
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: .4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* light mode: blend normally, softer */
+html.light-mode .cosmos-icon { mix-blend-mode: normal; opacity: .6; }
+
 /* ── Page Transitions ───────────────────────────────────── */
 .page-transition {
   position: fixed;
@@ -291,4 +357,68 @@
 @keyframes viewerZoom {
   from { opacity: 0; transform: scale(0.94); }
   to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── SCROLL ANIMATIONS (staggered reveal) ────────────────── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+              transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+              transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.scroll-reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+              transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.scroll-reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+              transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.scroll-reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.scroll-reveal-rotate {
+  opacity: 0;
+  transform: rotate(-8deg) scale(0.9);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+              transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.scroll-reveal-rotate.visible {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+/* Stagger children: add data-stagger-delay="N" to parent, each child gets computed delay */
+.stagger-group > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+              transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.stagger-group.visible > * {
+  opacity: 1;
+  transform: translateY(0);
 }

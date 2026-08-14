@@ -93,23 +93,23 @@
   // ── Body ─────────────────────────────────────────────────
   function bodyHTML(p, media) {
     const metaItems = [
-      '<div class="project-meta-item"><div class="pmi-label">Category</div><div class="pmi-value">' + esc(p.category || '—') + '</div></div>',
-      '<div class="project-meta-item"><div class="pmi-label">Year</div><div class="pmi-value">' + esc(p.year || '—') + '</div></div>',
-      p.client ? '<div class="project-meta-item"><div class="pmi-label">Client</div><div class="pmi-value">' + esc(p.client) + '</div></div>' : '',
-      '<div class="project-meta-item"><div class="pmi-label">Media</div><div class="pmi-value">' + media.length + ' <small>file' + (media.length === 1 ? '' : 's') + '</small></div></div>',
+      '<div class="project-meta-item scroll-reveal"><div class="pmi-label">Category</div><div class="pmi-value">' + esc(p.category || '—') + '</div></div>',
+      '<div class="project-meta-item scroll-reveal"><div class="pmi-label">Year</div><div class="pmi-value">' + esc(p.year || '—') + '</div></div>',
+      p.client ? '<div class="project-meta-item scroll-reveal"><div class="pmi-label">Client</div><div class="pmi-value">' + esc(p.client) + '</div></div>' : '',
+      '<div class="project-meta-item scroll-reveal"><div class="pmi-label">Media</div><div class="pmi-value">' + media.length + ' <small>file' + (media.length === 1 ? '' : 's') + '</small></div></div>',
     ].join('');
 
     const tools = (p.tools && p.tools.length)
-      ? `<div class="project-section"><div class="project-section-title">Tools &amp; Skills</div><div class="chip-row">${p.tools.map(t => `<span class="tool-chip"><i class="fas fa-wrench" style="margin-right:0.35rem"></i>${esc(t)}</span>`).join('')}</div></div>`
+      ? `<div class="project-section scroll-reveal"><div class="project-section-title">Tools &amp; Skills</div><div class="chip-row">${p.tools.map(t => `<span class="tool-chip"><i class="fas fa-wrench" style="margin-right:0.35rem"></i>${esc(t)}</span>`).join('')}</div></div>`
       : '';
 
     const services = (p.services && p.services.length)
-      ? `<div class="project-section"><div class="project-section-title">Services</div><div class="chip-row">${p.services.map(s => `<span class="tool-chip"><i class="fas fa-rocket" style="margin-right:0.35rem"></i>${esc(s)}</span>`).join('')}</div></div>`
+      ? `<div class="project-section scroll-reveal"><div class="project-section-title">Services</div><div class="chip-row">${p.services.map(s => `<span class="tool-chip"><i class="fas fa-rocket" style="margin-right:0.35rem"></i>${esc(s)}</span>`).join('')}</div></div>`
       : '';
 
     const gallery = media.length
-      ? `<div class="project-section"><div class="project-section-title">Gallery</div>${galleryHTML(media, layoutOf(p))}</div>`
-      : `<div class="project-section"><div class="project-section-title">Gallery</div><div class="no-media">No media uploaded yet for this project.</div></div>`;
+      ? `<div class="project-section"><div class="project-section-title scroll-reveal">Gallery</div>${galleryHTML(media, layoutOf(p))}</div>`
+      : `<div class="project-section"><div class="project-section-title scroll-reveal">Gallery</div><div class="no-media scroll-reveal">No media uploaded yet for this project.</div></div>`;
 
     const next = `
       <div class="project-next reveal">
@@ -131,20 +131,22 @@
 
   function galleryHTML(media, layout) {
     if (layout === 'grid') {
-      return `<div class="project-gallery gallery-grid" data-viewer>${media.map(itemFigure).join('')}</div>`;
+      return `<div class="project-gallery gallery-grid stagger-group" data-viewer>${media.map(itemFigure).join('')}</div>`;
     }
     if (layout === 'editorial') {
       const items = media.map((m, i) => itemFigure(m, i));
-      const featured = items[0];
+      const featured = items[0] ? items[0].replace('class="g-item"', 'class="g-item scroll-reveal-scale"') : '';
       const rest = items.slice(1);
       const groups = [];
       for (let i = 0; i < rest.length; i += 2) {
-        groups.push(`<div class="g-pair">${rest[i] || ''}${rest[i + 1] || ''}</div>`);
+        const a = rest[i] ? rest[i].replace('class="g-item"', 'class="g-item scroll-reveal-left"') : '';
+        const b = rest[i + 1] ? rest[i + 1].replace('class="g-item"', 'class="g-item scroll-reveal-right"') : '';
+        groups.push(`<div class="g-pair">${a}${b}</div>`);
       }
-      return `<div class="project-gallery gallery-editorial" data-viewer>${featured || ''}${groups.join('')}</div>`;
+      return `<div class="project-gallery gallery-editorial stagger-group" data-viewer>${featured}${groups.join('')}</div>`;
     }
     // auto → masonry (natural aspect ratio, zero cropping)
-    return `<div class="project-gallery gallery-masonry${media.length === 1 ? ' one' : ''}" data-viewer>${media.map(itemFigure).join('')}</div>`;
+    return `<div class="project-gallery gallery-masonry stagger-group${media.length === 1 ? ' one' : ''}" data-viewer>${media.map(itemFigure).join('')}</div>`;
   }
 
   function itemFigure(m, i) {

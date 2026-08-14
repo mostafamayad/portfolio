@@ -9,7 +9,7 @@ const PORTFOLIO_DATA = {
     bio: "I'm <strong>Mostafa Mohamed Ayad</strong>, a Graphic Designer &amp; Visual Creator from Tanta, Egypt — crafting bold, modern and unforgettable digital experiences that leave a mark.",
     email: 'mo.ayyad1711@gmail.com',
     phone: '+20 103 212 9702',
-    location: 'Tanta, Egypt 🇪🇬',
+    location: 'Tanta, Egypt',
     university: 'HIET — Tanta',
     available: true,
     quote: 'Great design is not just what it looks like — it\'s how it works and what it makes you feel.',
@@ -29,10 +29,10 @@ const PORTFOLIO_DATA = {
   ],
 
   stats: [
-    { icon: '✦', value: 5,  suffix: '+', label: 'YEARS OF\nDESIGN' },
-    { icon: '🎬', value: 3,  suffix: '+', label: 'YEARS IN\nMOTION' },
-    { icon: '💻', value: 2,  suffix: '+', label: 'YEARS IN\nIT' },
-    { icon: '🚀', value: 50, suffix: '+', label: 'PROJECTS\nDELIVERED' },
+    { icon: 'fa-solid fa-palette', value: 5,  suffix: '+', label: 'YEARS OF\nDESIGN' },
+    { icon: 'fa-solid fa-clapperboard', value: 3,  suffix: '+', label: 'YEARS IN\nMOTION' },
+    { icon: 'fa-solid fa-laptop-code', value: 2,  suffix: '+', label: 'YEARS IN\nIT' },
+    { icon: 'fa-solid fa-rocket', value: 50, suffix: '+', label: 'PROJECTS\nDELIVERED' },
   ],
 
   skills: [
@@ -47,27 +47,27 @@ const PORTFOLIO_DATA = {
   ],
 
   techStack: [
-    { name: 'Photoshop',     icon: '🎨' },
-    { name: 'Illustrator',   icon: '✒️' },
-    { name: 'Premiere Pro',  icon: '🎬' },
-    { name: 'After Effects', icon: '⚡' },
-    { name: 'Figma',         icon: '🖼️' },
-    { name: 'HTML / CSS',    icon: '💻' },
-    { name: 'Node.js',       icon: '🟢' },
-    { name: 'SQL',           icon: '🗄️' },
-    { name: 'Flutter',       icon: '📱' },
-    { name: 'CCNA',          icon: '🌐' },
-    { name: 'AWS',           icon: '☁️' },
-    { name: 'MCSA',          icon: '🖥️' },
+    { name: 'Photoshop',     icon: 'fa-solid fa-palette' },
+    { name: 'Illustrator',   icon: 'fa-solid fa-pen-nib' },
+    { name: 'Premiere Pro',  icon: 'fa-solid fa-clapperboard' },
+    { name: 'After Effects', icon: 'fa-solid fa-wand-magic-sparkles' },
+    { name: 'Figma',         icon: 'fa-solid fa-drafting-compass' },
+    { name: 'HTML / CSS',    icon: 'fa-solid fa-code' },
+    { name: 'Node.js',       icon: 'fa-brands fa-node-js' },
+    { name: 'SQL',           icon: 'fa-solid fa-database' },
+    { name: 'Flutter',       icon: 'fa-solid fa-mobile-screen' },
+    { name: 'CCNA',          icon: 'fa-solid fa-network-wired' },
+    { name: 'AWS',           icon: 'fa-solid fa-cloud' },
+    { name: 'MCSA',          icon: 'fa-solid fa-desktop' },
   ],
 
   certifications: [
-    { name: 'CCNA Certification',   org: 'Cisco',     year: '2023', icon: '🌐' },
-    { name: 'MCSA',                 org: 'Microsoft', year: '2022', icon: '🖥️' },
-    { name: 'AWS Cloud Practitioner',org: 'Amazon',   year: '2023', icon: '☁️' },
-    { name: 'UI/UX Design',         org: 'Coursera',  year: '2023', icon: '🎨' },
-    { name: 'Web Development',      org: 'Udemy',     year: '2022', icon: '💻' },
-    { name: 'Motion Graphics',      org: 'Udemy',     year: '2021', icon: '🎬' },
+    { name: 'CCNA Certification',   org: 'Cisco',     year: '2023', icon: 'fa-solid fa-network-wired' },
+    { name: 'MCSA',                 org: 'Microsoft', year: '2022', icon: 'fa-solid fa-desktop' },
+    { name: 'AWS Cloud Practitioner',org: 'Amazon',   year: '2023', icon: 'fa-solid fa-cloud' },
+    { name: 'UI/UX Design',         org: 'Coursera',  year: '2023', icon: 'fa-solid fa-drafting-compass' },
+    { name: 'Web Development',      org: 'Udemy',     year: '2022', icon: 'fa-solid fa-code' },
+    { name: 'Motion Graphics',      org: 'Udemy',     year: '2021', icon: 'fa-solid fa-clapperboard' },
   ],
 
   experience: [
@@ -121,12 +121,12 @@ const PORTFOLIO_DATA = {
   ],
 
   services: [
-    { icon: '✦', title: 'Brand Identity',      desc: 'Full brand systems: logo, color palette, typography, brand guide & all collateral.',             price: 'Starting at $150' },
-    { icon: '📱', title: 'Social Media Design', desc: 'Eye-catching posts, stories, highlight covers and full content calendar design.',                price: 'Starting at $80'  },
-    { icon: '🎬', title: 'Motion Graphics',     desc: 'Animated logos, intros, promotional videos and social reels that stop the scroll.',              price: 'Starting at $120' },
-    { icon: '💻', title: 'UI/UX Design',        desc: 'Clean, modern and user-friendly interface design for web and mobile applications.',              price: 'Starting at $200' },
-    { icon: '🖼️', title: 'Poster & Print',      desc: 'Stunning posters, flyers, banners and all print materials that make an impact.',                 price: 'Starting at $50'  },
-    { icon: '🌐', title: 'IT Solutions',        desc: 'Network setup, server configuration, IT support and infrastructure for your business.',          price: 'Custom Quote'     },
+    { icon: 'fa-solid fa-pen-ruler', title: 'Brand Identity',      desc: 'Full brand systems: logo, color palette, typography, brand guide & all collateral.',             price: 'Starting at $150' },
+    { icon: 'fa-solid fa-hashtag',   title: 'Social Media Design', desc: 'Eye-catching posts, stories, highlight covers and full content calendar design.',                price: 'Starting at $80'  },
+    { icon: 'fa-solid fa-clapperboard', title: 'Motion Graphics',  desc: 'Animated logos, intros, promotional videos and social reels that stop the scroll.',              price: 'Starting at $120' },
+    { icon: 'fa-solid fa-drafting-compass', title: 'UI/UX Design', desc: 'Clean, modern and user-friendly interface design for web and mobile applications.',              price: 'Starting at $200' },
+    { icon: 'fa-solid fa-image',     title: 'Poster & Print',      desc: 'Stunning posters, flyers, banners and all print materials that make an impact.',                 price: 'Starting at $50'  },
+    { icon: 'fa-solid fa-network-wired', title: 'IT Solutions',    desc: 'Network setup, server configuration, IT support and infrastructure for your business.',          price: 'Custom Quote'     },
   ],
 };
 
@@ -197,3 +197,55 @@ function normalizeProjects(list) {
   if (!Array.isArray(list)) return [];
   return list.map(normalizeProject);
 }
+
+// Legacy emoji icons (saved in older localStorage/export) → professional
+// Font Awesome classes, so the site always renders crisp vector icons.
+const LEGACY_ICON_MAP = {
+  '✦': 'fa-solid fa-palette',
+  '🎨': 'fa-solid fa-palette',
+  '✒️': 'fa-solid fa-pen-nib', '✒': 'fa-solid fa-pen-nib',
+  '🎬': 'fa-solid fa-clapperboard',
+  '⚡': 'fa-solid fa-wand-magic-sparkles',
+  '🖼️': 'fa-solid fa-drafting-compass', '🖼': 'fa-solid fa-drafting-compass',
+  '💻': 'fa-solid fa-code',
+  '🟢': 'fa-brands fa-node-js',
+  '🗄️': 'fa-solid fa-database', '🗄': 'fa-solid fa-database',
+  '📱': 'fa-solid fa-mobile-screen',
+  '🌐': 'fa-solid fa-network-wired',
+  '☁️': 'fa-solid fa-cloud', '☁': 'fa-solid fa-cloud',
+  '🖥️': 'fa-solid fa-desktop', '🖥': 'fa-solid fa-desktop',
+  '🚀': 'fa-solid fa-rocket',
+  '✉': 'fa-solid fa-envelope',
+  '📞': 'fa-solid fa-phone',
+  '📍': 'fa-solid fa-location-dot',
+  '🌙': 'fa-solid fa-moon',
+  '📦': 'fa-solid fa-box-open',
+  '🎵': 'fa-solid fa-music',
+};
+
+function normalizeIcon(value, fallback) {
+  if (typeof value !== 'string') return fallback;
+  const t = value.trim();
+  if (t.indexOf('fa-') === 0 || t.indexOf('fa ') === 0 || t.indexOf('fab ') === 0 || t.indexOf('fas ') === 0 || t.indexOf('fa-') !== -1) return value;
+  if (LEGACY_ICON_MAP[t]) return LEGACY_ICON_MAP[t];
+  return fallback;
+}
+
+// Normalize icon fields on DATA immediately, so every page (and every
+// leftover localStorage override) displays crisp Font Awesome icons.
+function normalizeIcons() {
+  if (!DATA) return;
+  if (Array.isArray(DATA.stats)) {
+    DATA.stats.forEach(s => { if (s && s.icon) s.icon = normalizeIcon(s.icon, 'fa-solid fa-circle-info'); });
+  }
+  if (Array.isArray(DATA.techStack)) {
+    DATA.techStack.forEach(t => { if (t && t.icon) t.icon = normalizeIcon(t.icon, 'fa-solid fa-code'); });
+  }
+  if (Array.isArray(DATA.certifications)) {
+    DATA.certifications.forEach(c => { if (c && c.icon) c.icon = normalizeIcon(c.icon, 'fa-solid fa-award'); });
+  }
+  if (Array.isArray(DATA.services)) {
+    DATA.services.forEach(s => { if (s && s.icon) s.icon = normalizeIcon(s.icon, 'fa-solid fa-briefcase'); });
+  }
+}
+normalizeIcons();
