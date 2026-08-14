@@ -541,21 +541,6 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 }
 .toggle-switch.on::after { transform: translateX(14px); }
 
-.menu-btn {
-  width: 40px; height: 40px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  transition: var(--transition);
-}
-.menu-btn:hover {
-  border-color: var(--purple);
-  color: var(--purple-light);
-  box-shadow: 0 0 12px var(--purple-glow);
-}
-
 /* ── HERO SECTION ───────────────────────────────────────── */
 .hero-section {
   padding: 3rem 2.5rem 2rem;
@@ -2629,15 +2614,6 @@ body.light-mode .top-bar,
 html.light-mode .top-bar {
   background: rgba(255,255,255,0.88);
   border-bottom-color: var(--border);
-}
-body.light-mode .top-bar .menu-btn,
-html.light-mode .top-bar .menu-btn {
-  background: rgba(15,23,42,0.06);
-  color: var(--text-secondary);
-}
-body.light-mode .top-bar .menu-btn:hover,
-html.light-mode .top-bar .menu-btn:hover {
-  background: rgba(124,58,237,0.12);
 }
 
 /* ── CUSTOM DROPDOWN (replaces native select for full dark/light control) ── */
