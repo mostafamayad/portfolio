@@ -1070,8 +1070,8 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   }
 }
 @keyframes categories-marquee {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 @media (prefers-reduced-motion: reduce) {
   .categories-scroll.is-marquee .marquee-track {
