@@ -202,12 +202,17 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   position: relative;
   overflow: hidden;
 }
+.nav-item a > * {
+  position: relative;
+  z-index: 1;
+}
 .nav-item a::before {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, var(--purple-glow), transparent);
+  background: linear-gradient(90deg, rgba(124,58,237,0.35), transparent);
   opacity: 0;
   transition: var(--transition);
+  z-index: 0;
 }
 .nav-item a:hover, .nav-item a.active {
   color: var(--text-primary);
@@ -247,7 +252,13 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.85);
+  background: rgba(13,13,26,0.35);
+  border: 1px solid rgba(124,58,237,0.35);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* ── LIVING NAV ICONS (micro-interactions) ────────────── */
@@ -2738,7 +2749,7 @@ html.light-mode .nav-icon {
   background: rgba(15,23,42,0.06);
 }
 body.light-mode .nav-num,
-html.light-mode .nav-num { color: var(--text-muted); }
+html.light-mode .nav-num { color: var(--text-muted); background: rgba(15,23,42,0.06); border-color: rgba(15,23,42,0.18); }
 body.light-mode .social-link,
 html.light-mode .social-link { color: var(--text-muted); }
 body.light-mode .sound-toggle,
