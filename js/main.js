@@ -477,7 +477,7 @@ function buildPage() {
   // Categories
   document.querySelectorAll('[data-categories]').forEach(container => {
     const catKey = {1:'branding', 2:'social', 3:'poster', 4:'web', 5:'motion', 6:'it'};
-    container.innerHTML = DATA.categories.map(cat => {
+    const cards = DATA.categories.map(cat => {
       const cover = (DATA.projects.find(p => p.category === catKey[cat.id] && p.cover) || {}).cover || '';
       const media = cover
         ? `<img src="${cover}" alt="${cat.title}" class="cat-card-img" loading="lazy">`
@@ -494,6 +494,14 @@ function buildPage() {
       </div>
     `;
     }).join('');
+    // Mobile only: wrap the cards in a duplicated marquee track so the row
+    // loops forever (last card unters out right, first one glides back in).
+    if (window.matchMedia('(max-width: 600px)').matches) {
+      container.classList.add('is-marquee');
+      container.innerHTML = `<div class="marquee-track"><div class="marquee-group">${cards}</div><div class="marquee-group">${cards}</div></div>`;
+    } else {
+      container.innerHTML = cards;
+    }
     initRevealAnimations();
     container.querySelectorAll('.cat-card').forEach(card => {
       card.addEventListener('click', () => {

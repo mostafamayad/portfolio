@@ -1040,6 +1040,34 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 .categories-scroll .cat-card:nth-child(6) { transition-delay: 0.45s; }
 .categories-scroll .cat-card:nth-child(n+7) { transition-delay: 0.45s; }
 
+/* Mobile only: endless rightward marquee for the category cards */
+@media (max-width: 600px) {
+  .categories-scroll.is-marquee {
+    overflow: hidden;
+  }
+  .categories-scroll.is-marquee .marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: categories-marquee 28s linear infinite;
+  }
+  .categories-scroll.is-marquee .marquee-group {
+    display: flex;
+    gap: 1rem;
+    padding-right: 1rem;
+  }
+}
+@keyframes categories-marquee {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .categories-scroll.is-marquee .marquee-track {
+    animation: none;
+    transform: none;
+  }
+}
+
 .cat-card {
   flex-shrink: 0;
   width: 200px;
