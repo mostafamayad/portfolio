@@ -63,7 +63,7 @@ function extractDriveId(raw) {
         let toType = m.type === 'video' ? 'video' : (m.type === 'youtube' ? 'youtube' : (m.type === 'drive' ? 'drive' : 'image'));
         if (toType === 'video' && /drive\.google\.com/.test(raw)) toType = 'drive';
         if (toType === 'video' && /youtube\.com|youtu\.be/.test(raw)) toType = 'youtube';
-        list.push({ src: toType === 'drive' ? (extractDriveId(raw) || raw) : raw, type: toType, name: m.name || '' });
+        list.push({ src: toType === 'drive' ? (extractDriveId(raw) || raw) : raw, type: toType, name: m.name || '', poster: m.poster || '' });
       });
     }
     if (p.cover && !list.some(m => m.src === p.cover)) {
@@ -162,14 +162,17 @@ function extractDriveId(raw) {
 
   function itemFigure(m, i) {
     const open = `data-vw-index="${i}"`;
+    const poster = m.poster || '';
     if (m.type === 'youtube') {
-      return `<figure class="g-item g-video" ${open} data-type="youtube" data-poster="https://i.ytimg.com/vi/${esc(m.src)}/hqdefault.jpg"><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
+      const p = poster || `https://i.ytimg.com/vi/${esc(m.src)}/hqdefault.jpg`;
+      return `<figure class="g-item g-video" ${open} data-type="youtube" data-click-type="youtube"><div class="g-video-cover" data-cover data-poster="${esc(p)}"><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     if (m.type === 'drive') {
-      return `<figure class="g-item g-video" ${open} data-type="video" data-poster="https://drive.google.com/thumbnail?id=${esc(m.src)}&sz=w800"><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
+      const p = poster || `https://drive.google.com/thumbnail?id=${esc(m.src)}&sz=w800`;
+      return `<figure class="g-item g-video" ${open} data-type="video" data-click-type="https://drive.google.com/file/d/${esc(m.src)}/preview"><div class="g-video-cover" data-cover data-poster="${esc(p)}"><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     if (m.type === 'video') {
-      return `<figure class="g-item g-video" ${open} data-type="video"><video src="${m.src}" preload="metadata" muted playsinline data-local-video></video><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
+      return `<figure class="g-item g-video" ${open} data-type="video" data-click-type="${esc(m.src)}"><video src="${m.src}" preload="metadata" muted playsinline data-local-video></video><div class="g-video-cover" data-cover><span class="g-play-btn"><i class="fas fa-play"></i></span></div></figure>`;
     }
     return `<figure class="g-item" ${open} data-type="image"><img src="${m.src}" alt="" loading="lazy" onload="window.__fitGalleryItem && window.__fitGalleryItem(this)"></figure>`;
   }

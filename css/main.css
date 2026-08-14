@@ -2462,6 +2462,7 @@ html.light-mode .article-cta { background: rgba(124,58,237,0.1); }
   text-shadow: 0 2px 18px rgba(0,0,0,0.6);
   transition: var(--transition);
 }
+.g-video { aspect-ratio: 16/9; display: block; }
 .g-video:hover::after { color: #fff; transform: scale(1.15); }
 .g-video-cover {
   position: absolute; inset: 0;

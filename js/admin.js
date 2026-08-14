@@ -436,13 +436,13 @@ function renderMediaGallery(media, projIdx) {
     media.map((m, mi) => {
       if (m.type === 'youtube') {
         return `<div style="position:relative;width:120px;">
-          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
+          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:${m.poster ? `url(${m.poster}) center/cover` : 'linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35))'};display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
       if (m.type === 'drive') {
         return `<div style="position:relative;width:120px;">
-          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(34,211,238,0.35),rgba(16,185,129,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">Drive</span></div>
+          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:${m.poster ? `url(${m.poster}) center/cover` : 'linear-gradient(135deg,rgba(34,211,238,0.35),rgba(16,185,129,0.35))'};display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">Drive</span></div>
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
@@ -471,13 +471,15 @@ window.addVideoLink = function(projIdx) {
   if (!adminData.projects[projIdx].media) adminData.projects[projIdx].media = [];
   const yt = youtubeVideoId(raw);
   if (yt) {
-    adminData.projects[projIdx].media.push({ src: yt, type: 'youtube', name: 'YouTube video' });
-    showAdminToast('تم إضافة الفيديو من YouTube');
+    const poster = `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`;
+    adminData.projects[projIdx].media.push({ src: yt, type: 'youtube', name: 'YouTube video', poster });
+    showAdminToast('تم إضافة الفيديو من YouTube (تم حفظ الغلاف)');
   } else {
     const gd = googleDriveId(raw);
     if (gd) {
-      adminData.projects[projIdx].media.push({ src: gd, type: 'drive', name: 'Google Drive video' });
-      showAdminToast('تم إضافة الفيديو من Google Drive');
+      const poster = `https://drive.google.com/thumbnail?id=${gd}&sz=w800`;
+      adminData.projects[projIdx].media.push({ src: gd, type: 'drive', name: 'Google Drive video', poster });
+      showAdminToast('تم إضافة الفيديو من Google Drive (تم حفظ الغلاف)');
     } else {
       adminData.projects[projIdx].media.push({ src: raw, type: 'video', name: raw.split('/').pop() });
       showAdminToast('تم إضافة الفيديو (ملف داخل الموقع)');
