@@ -416,6 +416,17 @@ input, textarea, select {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+.media-section-select {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.28rem 0.35rem;
+  font-size: 0.68rem;
+  background: #12122a;
+  color: var(--text1);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 /* ── Image Previews (Personal tab) ─────────────────────── */
 .image-section {

@@ -182,6 +182,7 @@ const PROJECT_DEFAULTS = {
   tools: [],
   featured: false,
   layout: 'auto',
+  sections: [],
 };
 
 function strToList(value) {

@@ -276,6 +276,7 @@ function collectFormData(section) {
         proj.client      = getVal(panel, `proj-client-${i}`);
         proj.services    = strToList(getVal(panel, `proj-services-${i}`));
         proj.tools       = strToList(getVal(panel, `proj-tools-${i}`));
+        proj.sections    = strToList(getVal(panel, `proj-sections-${i}`));
         const layoutEl   = panel.querySelector(`#proj-layout-${i}`);
         if (layoutEl) proj.layout = layoutEl.value || 'auto';
         const featEl     = panel.querySelector(`#proj-featured-${i}`);
@@ -388,6 +389,11 @@ function populateProjects() {
           </select>
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label"><i class="fas fa-columns" style="margin-right:0.4rem;color:var(--purple-light)"></i>أقسام المعرض (سكشنز) — اختياري</label>
+        <input class="form-input" id="proj-sections-${i}" value="${(p.sections||[]).join('، ')}" placeholder="تصاميم المنتجات، الشعارات">
+        <div class="upload-hint">اكتب أسماء الأقسام مفصولة بفاصلة — الموقع هيعرض كل قسم كمعرض مستقل داخل صفحة المشروع، ومن القائمة المنسدلة تحت كل صورة بتختار إيه قسمها يحفظ فيه. لو سَبّت الحقل فاضي هيتعرض كله في قسم واحد (Gallery).</div>
+      </div>
       <div class="featured-row">
         <label class="featured-check">
           <input type="checkbox" id="proj-featured-${i}" ${p.featured ? 'checked' : ''}>
@@ -442,28 +448,37 @@ function populateProjects() {
 
 function renderMediaGallery(media, projIdx) {
   if (!media || media.length === 0) return '';
+  const sections = (adminData.projects[projIdx].sections || []).map(String);
   return `<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem">` +
     media.map((m, mi) => {
+      const picker = `<select class="media-section-select" id="media-section-${projIdx}-${mi}" onchange="setMediaSection(${projIdx},${mi},this.value)" title="القسم">
+        <option value="">بدون (Gallery)</option>
+        ${sections.map(s => `<option value="${escAttr(s)}" ${(m.section||'')===s?'selected':''}>${escAttr(s)}</option>`).join('')}
+      </select>`;
       if (m.type === 'youtube') {
         return `<div style="position:relative;width:120px;">
           <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:${m.poster ? `url(${m.poster}) center/cover` : 'linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35))'};display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
+          ${picker}
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
       if (m.type === 'drive') {
         return `<div style="position:relative;width:120px;">
           <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:${m.poster ? `url(${m.poster}) center/cover` : 'linear-gradient(135deg,rgba(34,211,238,0.35),rgba(16,185,129,0.35))'};display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">Drive</span></div>
+          ${picker}
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
       if (m.type === 'video') {
         return `<div style="position:relative;width:120px;">
           <video src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)"></video>
+          ${picker}
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       } else {
         return `<div style="position:relative;width:120px;">
           <img src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)">
+          ${picker}
           <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.72rem;padding:4px 6px;cursor:pointer"><i class="fas fa-times"></i></button>
         </div>`;
       }
@@ -548,6 +563,14 @@ window.handleProjectMedia = async function(projIdx, input) {
   }
 };
 
+window.setMediaSection = function(projIdx, mediaIdx, section) {
+  const proj = adminData.projects[projIdx];
+  const media = proj.media && proj.media[mediaIdx];
+  if (!media) return;
+  media.section = section;
+  saveAll();
+};
+
 window.removeMedia = function(projIdx, mediaIdx) {
   adminData.projects[projIdx].media.splice(mediaIdx, 1);
   const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
@@ -565,6 +588,7 @@ window.saveProject = function(projIdx) {
   proj.client      = getVal(panel, `proj-client-${projIdx}`);
   proj.services    = strToList(getVal(panel, `proj-services-${projIdx}`));
   proj.tools       = strToList(getVal(panel, `proj-tools-${projIdx}`));
+  proj.sections    = strToList(getVal(panel, `proj-sections-${projIdx}`));
   proj.layout      = document.getElementById(`proj-layout-${projIdx}`).value || 'auto';
   const featBox = document.getElementById(`proj-featured-${projIdx}`);
   proj.featured    = featBox ? featBox.checked : !!proj.featured;
@@ -593,7 +617,8 @@ window.addNewProject = function() {
     services: [],
     tools: [],
     featured: false,
-    layout: 'auto'
+    layout: 'auto',
+    sections: []
   });
   saveAll();
   populateProjects();
@@ -662,6 +687,14 @@ function getVal(container, id) {
 function setVal(id, val) {
   const el = document.getElementById(id);
   if (el) el.value = val || '';
+}
+function escAttr(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // ── Preview, Reset, Logout ────────────────────────────────

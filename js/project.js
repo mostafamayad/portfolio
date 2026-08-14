@@ -56,6 +56,7 @@ function extractDriveId(raw) {
 
   function collectMedia(p) {
     const list = [];
+    const hasSections = Array.isArray(p.sections) && p.sections.length;
     if (Array.isArray(p.media)) {
       p.media.forEach(m => {
         if (!m || !m.src) return;
@@ -63,13 +64,32 @@ function extractDriveId(raw) {
         let toType = m.type === 'video' ? 'video' : (m.type === 'youtube' ? 'youtube' : (m.type === 'drive' ? 'drive' : 'image'));
         if (toType === 'video' && /drive\.google\.com/.test(raw)) toType = 'drive';
         if (toType === 'video' && /youtube\.com|youtu\.be/.test(raw)) toType = 'youtube';
-        list.push({ src: toType === 'drive' ? (extractDriveId(raw) || raw) : raw, type: toType, name: m.name || '', poster: m.poster || '' });
+        list.push({ src: toType === 'drive' ? (extractDriveId(raw) || raw) : raw, type: toType, name: m.name || '', poster: m.poster || '', section: m.section || '' });
       });
     }
-    if (p.cover && !list.some(m => m.src === p.cover)) {
+    // When the project is split into sections the cover already lives in the
+    // hero, so it isn't duplicated as an ungrouped gallery leftover.
+    if (p.cover && !hasSections && !list.some(m => m.src === p.cover)) {
       list.unshift({ src: p.cover, type: 'image', name: 'Cover' });
     }
     return list;
+  }
+
+  // Split the media list into ordered sections. Each media item carried a
+  // `section` name; anything unmatched or unspecified falls back to a single
+  // "Gallery" group so no file ever disappears.
+  function buildSections(p, media) {
+    const sections = Array.isArray(p.sections) && p.sections.length ? p.sections.map(String).filter(Boolean) : [];
+    const groups = sections.length ? sections.map(title => ({ title, items: [] })) : [{ title: 'Gallery', items: [] }];
+    const leftover = [];
+    media.forEach((m, i) => {
+      const idx = sections.indexOf(m.section);
+      if (sections.length && m.section && idx !== -1) groups[idx].items.push({ m, i });
+      else leftover.push({ m, i });
+    });
+    if (!sections.length) groups[0].items = media.map((m, i) => ({ m, i }));
+    else if (leftover.length) groups.push({ title: 'Gallery', items: leftover });
+    return groups.filter(g => g.items.length);
   }
 
   function layoutOf(project) {
@@ -118,8 +138,13 @@ function extractDriveId(raw) {
       ? `<div class="project-section scroll-reveal"><div class="project-section-title">Services</div><div class="chip-row">${p.services.map(s => `<span class="tool-chip"><i class="fas fa-rocket" style="margin-right:0.35rem"></i>${esc(s)}</span>`).join('')}</div></div>`
       : '';
 
+    const sections = buildSections(p, media);
     const gallery = media.length
-      ? `<div class="project-section"><div class="project-section-title scroll-reveal">Gallery</div>${galleryHTML(media, layoutOf(p))}</div>`
+      ? sections.map(sec => `
+          <div class="project-section">
+            <div class="project-section-title scroll-reveal">${esc(sec.title)}</div>
+            ${galleryHTML(sec.items, layoutOf(p))}
+          </div>`).join('')
       : `<div class="project-section"><div class="project-section-title scroll-reveal">Gallery</div><div class="no-media scroll-reveal">No media uploaded yet for this project.</div></div>`;
 
     const next = `
@@ -140,24 +165,24 @@ function extractDriveId(raw) {
       </div>`;
   }
 
-  function galleryHTML(media, layout) {
+  function galleryHTML(items, layout) {
     if (layout === 'grid') {
-      return `<div class="project-gallery gallery-grid stagger-group" data-viewer>${media.map(itemFigure).join('')}</div>`;
+      return `<div class="project-gallery gallery-grid stagger-group" data-viewer>${items.map(({ m, i }) => itemFigure(m, i)).join('')}</div>`;
     }
     if (layout === 'editorial') {
-      const items = media.map((m, i) => itemFigure(m, i));
-      const featured = items[0] ? items[0].replace('class="g-item"', 'class="g-item scroll-reveal-scale"') : '';
-      const rest = items.slice(1);
+      const figs = items.map(({ m, i }) => itemFigure(m, i));
+      const featured = figs[0] ? figs[0].replace('class="g-item"', 'class="g-item scroll-reveal-scale"') : '';
+      const rest = figs.slice(1);
       const groups = [];
-      for (let i = 0; i < rest.length; i += 2) {
-        const a = rest[i] ? rest[i].replace('class="g-item"', 'class="g-item scroll-reveal-left"') : '';
-        const b = rest[i + 1] ? rest[i + 1].replace('class="g-item"', 'class="g-item scroll-reveal-right"') : '';
+      for (let j = 0; j < rest.length; j += 2) {
+        const a = rest[j] ? rest[j].replace('class="g-item"', 'class="g-item scroll-reveal-left"') : '';
+        const b = rest[j + 1] ? rest[j + 1].replace('class="g-item"', 'class="g-item scroll-reveal-right"') : '';
         groups.push(`<div class="g-pair">${a}${b}</div>`);
       }
       return `<div class="project-gallery gallery-editorial stagger-group" data-viewer>${featured}${groups.join('')}</div>`;
     }
     // auto → masonry (natural aspect ratio, zero cropping)
-    return `<div class="project-gallery gallery-masonry stagger-group${media.length === 1 ? ' one' : ''}" data-viewer>${media.map(itemFigure).join('')}</div>`;
+    return `<div class="project-gallery gallery-masonry stagger-group${items.length === 1 ? ' one' : ''}" data-viewer>${items.map(({ m, i }) => itemFigure(m, i)).join('')}</div>`;
   }
 
   function itemFigure(m, i) {
