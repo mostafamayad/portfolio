@@ -215,31 +215,38 @@ function initTopBar() {
     bgMusic.preload = 'metadata';
     bgMusic.volume = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ? 0.1 : 0.2;
 
-    const resume = () => {
-      if (audioState.currentTime > 0) {
-        try { bgMusic.currentTime = audioState.currentTime; } catch (e) {}
-      }
-      if (audioState.soundOn !== false && audioState.playing) {
-        const tryPlay = () => bgMusic.play().then(() => { audioInitialized = true; })
-          .catch(() => {});
-        // Autoplay might be blocked — retry on the first user gesture
-        let retried = false;
-        const retry = () => {
-          if (!retried) { retried = true; tryPlay(); }
-          cleanup();
-        };
-        function cleanup() {
-          document.removeEventListener('click', retry);
-          document.removeEventListener('touchstart', retry);
-        }
-        document.addEventListener('click', retry, { once: true });
-        document.addEventListener('touchstart', retry, { once: true });
-        tryPlay();
-      }
-    };
+    // Restore playback position only — never auto-play.
+    if (audioState.currentTime > 0) {
+      try { bgMusic.currentTime = audioState.currentTime; } catch (e) {}
+    }
 
-    if (bgMusic.readyState >= 1) resume();
-    else bgMusic.addEventListener('loadedmetadata', resume, { once: true });
+    // ── Play / pause helper ──
+    const npBtn = document.getElementById('np-play-btn');
+    const syncPlayBtn = () => {
+      if (!npBtn) return;
+      npBtn.innerHTML = bgMusic.paused
+        ? '<i class="fas fa-play"></i>'
+        : '<i class="fas fa-pause"></i>';
+    };
+    bgMusic.addEventListener('play', syncPlayBtn);
+    bgMusic.addEventListener('pause', syncPlayBtn);
+
+    // Play button: the ONLY way music starts (user clicks play)
+    if (npBtn) {
+      npBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!bgMusic) return;
+        if (bgMusic.paused) {
+          bgMusic.play().then(() => { audioInitialized = true; }).catch(() => {});
+        } else {
+          bgMusic.pause();
+        }
+        if (soundToggle) soundToggle.classList.add('on');
+        audioState.soundOn = true;
+        audioState.volume = bgMusic.volume;
+        cvSaveJSON(CV_AUDIO_KEY, audioState);
+      });
+    }
 
     // ── Persist playback state during the session ──
     let lastSave = 0;
@@ -271,23 +278,13 @@ function initTopBar() {
     });
   }
 
-  // First-ever visit: start music on the first user interaction if ON
-  const playOnFirstGesture = () => {
-    if (!audioInitialized && soundToggle && soundToggle.classList.contains('on') && bgMusic) {
-      bgMusic.play().then(() => { audioInitialized = true; }).catch(() => {});
-    }
-  };
-  document.addEventListener('click', playOnFirstGesture, { once: true });
-  document.addEventListener('touchstart', playOnFirstGesture, { once: true });
-
   if (soundToggle) {
     soundToggle.addEventListener('click', () => {
       soundToggle.classList.toggle('on');
       if (!bgMusic) return;
-      if (soundToggle.classList.contains('on')) {
+      if (soundToggle.classList.contains('on') && bgMusic.paused && audioInitialized) {
         bgMusic.play().catch(() => {});
-        audioInitialized = true;
-      } else {
+      } else if (!soundToggle.classList.contains('on')) {
         bgMusic.pause();
       }
       audioState.currentTime = bgMusic.currentTime;

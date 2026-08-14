@@ -1362,6 +1362,46 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   50% { height: 18px; }
 }
 
+/* ── Homepage music card ────────────────────────────────── */
+.music-card-section { padding: 1.25rem 2.5rem 0; }
+.np-home-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(120deg, rgba(124,58,237,0.14), rgba(6,182,212,0.08));
+  border: 1px solid rgba(124,58,237,0.3);
+  padding: 1.15rem 1.5rem;
+}
+.np-home-side { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 0; }
+.np-home-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.np-play-big {
+  width: 52px; height: 52px;
+  font-size: 1.05rem;
+  border-width: 2px;
+  background: rgba(124,58,237,0.18);
+}
+.np-hint {
+  font-size: 0.74rem;
+  color: var(--purple-light);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+.np-home-card .np-waveform { margin-top: 0; }
+@media (max-width: 600px) {
+  .music-card-section { padding: 1rem 1rem 0; }
+  .np-home-card { flex-direction: column; align-items: flex-start; }
+  .np-home-cta { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+}
+html.light-mode .np-home-card { background: linear-gradient(120deg, rgba(124,58,237,0.08), rgba(6,182,212,0.06)); }
+
 /* Mini Projects Preview in Right Panel */
 .panel-projects {
   display: flex;
