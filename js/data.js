@@ -140,7 +140,14 @@ function loadData() {
   const saved = localStorage.getItem('portfolio_data');
   let override = null;
   if (saved) {
-    try { override = JSON.parse(saved); } catch(e) { override = null; }
+    // Version gate: any override saved before the current unified release is
+    // stale — it must not shadow the shared baseline, otherwise phone and
+    // desktop would keep showing different projects.
+    const savedVersion = localStorage.getItem('portfolio_data_version');
+    const currentVersion = (typeof SITE_DATA_VERSION !== 'undefined') ? String(SITE_DATA_VERSION) : '';
+    if (savedVersion && savedVersion === currentVersion) {
+      try { override = JSON.parse(saved); } catch(e) { override = null; }
+    }
   }
   if (!override) override = shared;
   if (!override) return PORTFOLIO_DATA;

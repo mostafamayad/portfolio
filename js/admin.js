@@ -22,7 +22,12 @@ function loadAdminData() {
     ? JSON.parse(JSON.stringify(SITE_DATA))
     : PORTFOLIO_DATA;
   const saved = localStorage.getItem('portfolio_data');
-  try { adminData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(base)); }
+  // Same version gate as data.js: stale per-device copies are ignored so the
+  // admin panel always starts from the current unified baseline.
+  const savedVersion = localStorage.getItem('portfolio_data_version');
+  const currentVersion = (typeof SITE_DATA_VERSION !== 'undefined') ? String(SITE_DATA_VERSION) : '';
+  const isCurrent = !!(saved && savedVersion && savedVersion === currentVersion);
+  try { adminData = isCurrent ? JSON.parse(saved) : JSON.parse(JSON.stringify(base)); }
   catch(e) { adminData = JSON.parse(JSON.stringify(base)); }
   if (!adminData.projects) adminData.projects = JSON.parse(JSON.stringify(base.projects));
   if (!adminData.personal) adminData.personal = JSON.parse(JSON.stringify(base.personal));
@@ -35,6 +40,11 @@ function loadAdminData() {
 function saveAll() {
   try {
     localStorage.setItem('portfolio_data', JSON.stringify(adminData));
+    // Stamp the unified baseline version so loadData() knows this override is
+    // current and lets it win (older per-device copies are ignored on the phone).
+    if (typeof SITE_DATA_VERSION !== 'undefined') {
+      localStorage.setItem('portfolio_data_version', String(SITE_DATA_VERSION));
+    }
     showAdminToast('تم الحفظ بنجاح', 'success');
   } catch (e) {
     console.error('Save failed', e);
@@ -665,6 +675,7 @@ function initReset() {
   btn.addEventListener('click', () => {
     if (confirm('هتمسح كل التعديلات وترجع للبيانات الأصلية. متأكد؟')) {
       localStorage.removeItem('portfolio_data');
+      localStorage.removeItem('portfolio_data_version');
       adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA));
       populateAllForms();
       showAdminToast('تم إعادة الضبط', 'success');
