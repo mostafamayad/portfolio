@@ -870,19 +870,44 @@ function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('.form-submit');
     const origText = btn.textContent;
+    const success = (msg) => showToast(msg, 'success');
+    const fail = (msg) => showToast(msg, 'error');
+
+    const fields = {
+      name: (form.elements['name'] || {}).value || '',
+      email: (form.elements['email'] || {}).value || '',
+      service: (form.elements['service'] || {}).value || '',
+      message: (form.elements['message'] || {}).value || ''
+    };
+    if (!fields.name || !fields.email || !fields.message) {
+      fail('Please fill in all required fields.');
+      return;
+    }
+
     btn.textContent = 'SENDING...';
     btn.disabled = true;
-
-    setTimeout(() => {
-      showToast('Message sent successfully! I\'ll get back to you soon.', 'success');
-      form.reset();
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(fields)
+      });
+      if (res.ok) {
+        success('Message sent successfully! I\'ll get back to you soon.');
+        form.reset();
+      } else {
+        fail('Something went wrong. Please try again or email me directly.');
+      }
+    } catch (err) {
+      fail('Check your internet connection and try again.');
+    } finally {
       btn.textContent = origText;
       btn.disabled = false;
-    }, 1500);
+    }
   });
 }
 
