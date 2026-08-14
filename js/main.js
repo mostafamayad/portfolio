@@ -486,7 +486,7 @@ function buildPage() {
 
   // Categories
   document.querySelectorAll('[data-categories]').forEach(container => {
-    const catKey = {1:'branding', 2:'social', 3:'poster', 4:'web', 5:'video', 6:'it'};
+    const catKey = {1:'branding', 2:'social', 3:'poster', 4:'web', 5:'motion', 6:'it'};
     container.innerHTML = DATA.categories.map(cat => {
       const cover = (DATA.projects.find(p => p.category === catKey[cat.id] && p.cover) || {}).cover || '';
       const media = cover
