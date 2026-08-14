@@ -251,11 +251,11 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 .nav-num {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--purple-light);
+  color: #c4b5fd;
   letter-spacing: 0.04em;
-  opacity: 0.9;
+  text-shadow: 0 0 6px rgba(167,139,250,0.5);
 }
 
 /* ── LIVING NAV ICONS (micro-interactions) ────────────── */
@@ -2746,7 +2746,7 @@ html.light-mode .nav-icon {
   background: rgba(15,23,42,0.06);
 }
 body.light-mode .nav-num,
-html.light-mode .nav-num { color: var(--text-muted); background: rgba(15,23,42,0.06); border-color: rgba(15,23,42,0.18); }
+html.light-mode .nav-num { color: #7c3aed; text-shadow: none; }
 body.light-mode .social-link,
 html.light-mode .social-link { color: var(--text-muted); }
 body.light-mode .sound-toggle,
