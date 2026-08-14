@@ -410,6 +410,12 @@ function populateProjects() {
         <div id="proj-media-gallery-${i}" class="media-gallery">
           ${renderMediaGallery(p.media || [], i)}
         </div>
+        <div style="margin-top:0.75rem;border-top:1px dashed var(--border);padding-top:0.75rem">
+          <label class="form-label" style="font-size:0.85rem">🎬 فيديو كامل بالجودة الأصلية (مرفوع على YouTube أو كملف داخل الموقع)</label>
+          <input type="text" id="proj-video-link-${i}" class="form-input" style="margin-bottom:0.4rem" placeholder="https://www.youtube.com/watch?v=... أو assets/videos/my-clip.mp4">
+          <button class="add-btn" style="width:auto;padding:0.5rem 1rem" onclick="addVideoLink(${i})"><i class="fas fa-link"></i> إضافة الفيديو</button>
+          <div class="upload-hint">المتصفح لا يتحمل حفظ فيديو كامل، فالرابط أو الملف داخل الموقع مش بيمتنزع على المساحة — والجودة تعليها من مشغل الفيديو.</div>
+        </div>
       </div>
 
       <button class="save-btn" onclick="saveProject(${i})"><i class="fas fa-save"></i> حفظ هذا المشروع</button>
@@ -428,6 +434,12 @@ function renderMediaGallery(media, projIdx) {
   if (!media || media.length === 0) return '';
   return `<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem">` +
     media.map((m, mi) => {
+      if (m.type === 'youtube') {
+        return `<div style="position:relative;width:120px;">
+          <div style="width:120px;height:80px;border-radius:6px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(220,38,38,0.35));display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;gap:0.25rem;text-align:center;padding:0.25rem">▶<span style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.src}">YouTube</span></div>
+          <button onclick="removeMedia(${projIdx},${mi})" style="position:absolute;top:2px;right:2px;background:var(--red);border:none;border-radius:4px;color:white;font-size:0.6rem;padding:2px 5px;cursor:pointer">✕</button>
+        </div>`;
+      }
       if (m.type === 'video') {
         return `<div style="position:relative;width:120px;">
           <video src="${m.src}" style="width:120px;height:80px;border-radius:6px;object-fit:cover;border:1px solid var(--border)"></video>
@@ -440,6 +452,33 @@ function renderMediaGallery(media, projIdx) {
         </div>`;
       }
     }).join('') + `</div>`;
+}
+
+window.addVideoLink = function(projIdx) {
+  const input = document.getElementById(`proj-video-link-${projIdx}`);
+  if (!input) return;
+  const raw = (input.value || '').trim();
+  if (!raw) {
+    showAdminToast('⚠️ اكتب رابط الفيديو أولاً');
+    return;
+  }
+  if (!adminData.projects[projIdx].media) adminData.projects[projIdx].media = [];
+  const yt = youtubeVideoId(raw);
+  if (yt) {
+    adminData.projects[projIdx].media.push({ src: yt, type: 'youtube', name: 'YouTube video' });
+  } else {
+    adminData.projects[projIdx].media.push({ src: raw, type: 'video', name: raw.split('/').pop() });
+  }
+  input.value = '';
+  const gallery = document.getElementById(`proj-media-gallery-${projIdx}`);
+  if (gallery) gallery.innerHTML = renderMediaGallery(adminData.projects[projIdx].media, projIdx);
+  saveAll();
+  showAdminToast('✓ تم إضافة الفيديو');
+};
+
+function youtubeVideoId(url) {
+  const m = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/.exec(url);
+  return m ? m[1] : null;
 }
 
 window.handleProjectCover = async function(projIdx, input) {

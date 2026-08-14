@@ -2055,6 +2055,8 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
   transform: translateY(-3px);
 }
 .g-item img, .g-item video { width: 100%; height: auto; display: block; }
+.g-item iframe { width: 100%; height: 100%; aspect-ratio: 16/9; border: 0; display: block; background: #000; }
+.gallery-grid .g-item iframe { height: 100%; }
 .g-video::after {
   content: '▶';
   position: absolute; inset: 0;

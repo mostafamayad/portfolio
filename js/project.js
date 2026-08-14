@@ -51,7 +51,8 @@
     if (Array.isArray(p.media)) {
       p.media.forEach(m => {
         if (!m || !m.src) return;
-        list.push({ src: m.src, type: m.type === 'video' ? 'video' : 'image', name: m.name || '' });
+        const toType = m.type === 'video' ? 'video' : (m.type === 'youtube' ? 'youtube' : 'image');
+        list.push({ src: m.src, type: toType, name: m.name || '' });
       });
     }
     if (p.cover && !list.some(m => m.src === p.cover)) {
@@ -148,6 +149,9 @@
 
   function itemFigure(m, i) {
     const open = `data-vw-index="${i}"`;
+    if (m.type === 'youtube') {
+      return `<figure class="g-item g-video" ${open} data-type="youtube"><iframe src="https://www.youtube-nocookie.com/embed/${esc(m.src)}" title="video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure>`;
+    }
     if (m.type === 'video') {
       return `<figure class="g-item g-video" ${open} data-type="video"><video src="${m.src}" preload="metadata" muted playsinline></video></figure>`;
     }
@@ -168,7 +172,7 @@
 
   function initGallerySpans(root) {
     // videos in grid get a neutral span
-    root.querySelectorAll('.gallery-grid .g-item[data-type="video"]').forEach(f => {
+    root.querySelectorAll('.gallery-grid .g-item[data-type="video"], .gallery-grid .g-item[data-type="youtube"]').forEach(f => {
       f.classList.add('g-grid-wide');
     });
     // click binding for the whole gallery
@@ -254,9 +258,11 @@
     const count = viewer.querySelector('#vw-count');
     const name = viewer.querySelector('#vw-name');
 
-    mediaBox.innerHTML = item.type === 'video'
-      ? `<video src="${item.src}" controls autoplay playsinline></video>`
-      : `<img src="${item.src}" alt="">`;
+    mediaBox.innerHTML = item.type === 'youtube'
+      ? `<iframe src="https://www.youtube-nocookie.com/embed/${esc(item.src)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+      : item.type === 'video'
+        ? `<video src="${item.src}" controls autoplay playsinline></video>`
+        : `<img src="${item.src}" alt="">`;
 
     if (count) count.textContent = `${viewerIndex + 1} / ${viewerItems.length}`;
     if (name) name.textContent = item.name ? `— ${item.name}` : '';
