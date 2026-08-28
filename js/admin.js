@@ -552,7 +552,7 @@ window.handleProjectMedia = async function(projIdx, input) {
     const isVideo = file.type.startsWith('video/');
     const dataSrc = isVideo ? (await readFileData(file)) : ((await compressImage(file, 1280, 0.78)) || (await readFileData(file)));
     if (dataSrc) {
-      adminData.projects[projIdx].media.push({ src: dataSrc, type: isVideo ? 'video' : 'image', name: file.name });
+      adminData.projects[projIdx].media.push({ src: dataSrc, type: isVideo ? 'video' : 'image', name: '' });
     }
     loaded++;
     if (loaded === files.length) {

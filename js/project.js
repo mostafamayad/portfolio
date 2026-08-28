@@ -343,7 +343,7 @@ function extractDriveId(raw) {
           : `<img src="${item.src}" alt="">`;
 
     if (count) count.textContent = `${viewerIndex + 1} / ${viewerItems.length}`;
-    if (name) name.textContent = item.name ? `— ${item.name}` : '';
+    if (name) name.textContent = '';
   }
 
   // Expose for inline usage / debugging
