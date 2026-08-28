@@ -99,7 +99,7 @@ async function saveAll() {
         localStorage.setItem('portfolio_data_version', String(SITE_DATA_VERSION));
       }
     } catch (e) { /* ignore quota limits */ }
-    showAdminToast('تم الحفظ بنجاح', 'success');
+    showAdminToast('تم الحفظ محلياً — اضغط "مزامنة ورفع للموقع" حتى تظهر التعديلات على الجميع', 'success');
   } catch (e) {
     console.error('Save failed', e);
     showAdminToast(

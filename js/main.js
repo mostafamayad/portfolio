@@ -2,6 +2,12 @@
 // MAIN.JS — Core functionality
 // ============================================================
 
+// Fix black screen when navigating back on mobile (bfcache restore).
+// The persisted snapshot can render before CSS/JS finish, so force a reload.
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) window.location.reload();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   initLoading();
   initCursor();
