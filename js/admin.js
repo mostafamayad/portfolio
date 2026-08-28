@@ -5,27 +5,72 @@
 const ADMIN_PASSWORD = 'admin123';
 let adminData = null;
 
+// ── Storage ──────────────────────────────────────────────
+// Admins can upload large images, so we persist the whole working copy in
+// IndexedDB (practically unlimited) instead of localStorage (~5MB cap).
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('portfolio_admin', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('kv');
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbGet(key) {
+  try {
+    const db = await openDB();
+    return await new Promise((res, rej) => {
+      const rx = db.transaction('kv', 'readonly').objectStore('kv').get(key);
+      rx.onsuccess = () => res(rx.result);
+      rx.onerror = () => rej(rx.error);
+    });
+  } catch (e) { return undefined; }
+}
+async function idbSet(key, value) {
+  return new Promise((resolve, reject) => {
+    openDB().then(db => {
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(value, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    }).catch(reject);
+  });
+}
+async function idbRemove(key) {
+  try {
+    const db = await openDB();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').delete(key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  } catch (e) { /* ignore */ }
+}
+
 // ── Init ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  loadAdminData();
-  initLogin();
-  initTabs();
-  initSaveButtons();
-  initPreview();
-  initReset();
-  initLogout();
-  initExportImport();
-  initSync();
+  loadAdminData().then(() => {
+    initLogin();
+    initTabs();
+    initSaveButtons();
+    initPreview();
+    initReset();
+    initLogout();
+    initExportImport();
+    initSync();
+  });
 });
 
-function loadAdminData() {
+async function loadAdminData() {
   const base = (typeof SITE_DATA !== 'undefined' && SITE_DATA)
     ? JSON.parse(JSON.stringify(SITE_DATA))
     : PORTFOLIO_DATA;
-  const saved = localStorage.getItem('portfolio_data');
+  // Read from IndexedDB first, then fall back to the legacy localStorage copy.
+  const saved = await idbGet('portfolio_data') || localStorage.getItem('portfolio_data');
   // Same version gate as data.js: stale per-device copies are ignored so the
   // admin panel always starts from the current unified baseline.
-  const savedVersion = localStorage.getItem('portfolio_data_version');
+  const savedVersion = await idbGet('portfolio_data_version') || localStorage.getItem('portfolio_data_version');
   const currentVersion = (typeof SITE_DATA_VERSION !== 'undefined') ? String(SITE_DATA_VERSION) : '';
   const isCurrent = !!(saved && savedVersion && savedVersion === currentVersion);
   try { adminData = isCurrent ? JSON.parse(saved) : JSON.parse(JSON.stringify(base)); }
@@ -38,20 +83,28 @@ function loadAdminData() {
   }
 }
 
-function saveAll() {
+async function saveAll() {
   try {
-    localStorage.setItem('portfolio_data', JSON.stringify(adminData));
+    await idbSet('portfolio_data', adminData);
     // Stamp the unified baseline version so loadData() knows this override is
     // current and lets it win (older per-device copies are ignored on the phone).
     if (typeof SITE_DATA_VERSION !== 'undefined') {
-      localStorage.setItem('portfolio_data_version', String(SITE_DATA_VERSION));
+      await idbSet('portfolio_data_version', String(SITE_DATA_VERSION));
     }
+    // Best-effort localStorage mirror keeps the in-browser preview live, but it
+    // is allowed to overflow silently — IndexedDB is the source of truth now.
+    try {
+      localStorage.setItem('portfolio_data', JSON.stringify(adminData));
+      if (typeof SITE_DATA_VERSION !== 'undefined') {
+        localStorage.setItem('portfolio_data_version', String(SITE_DATA_VERSION));
+      }
+    } catch (e) { /* ignore quota limits */ }
     showAdminToast('تم الحفظ بنجاح', 'success');
   } catch (e) {
     console.error('Save failed', e);
     showAdminToast(
       (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'))
-        ? 'مساحة المتصفح ممتلئة — ارفع صور أصغر أو احذف مشاريع'
+        ? 'تعذر الحفظ في قاعدة البيانات — حاول مرة أخرى'
         : 'لم يتم الحفظ — حاول مرة أخرى',
       'error'
     );
@@ -710,6 +763,8 @@ function initReset() {
     if (confirm('هتمسح كل التعديلات وترجع للبيانات الأصلية. متأكد؟')) {
       localStorage.removeItem('portfolio_data');
       localStorage.removeItem('portfolio_data_version');
+      idbRemove('portfolio_data');
+      idbRemove('portfolio_data_version');
       adminData = JSON.parse(JSON.stringify(PORTFOLIO_DATA));
       populateAllForms();
       showAdminToast('تم إعادة الضبط', 'success');
