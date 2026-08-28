@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReset();
   initLogout();
   initExportImport();
+  initSync();
 });
 
 function loadAdminData() {
@@ -769,6 +770,93 @@ function initExportImport() {
       reader.readAsText(file);
     });
   }
+}
+
+// ── Sync to GitHub (pushes generated site-data.js to the repo) ──
+function buildSiteDataJS() {
+  const baseVersion = (typeof SITE_DATA_VERSION !== 'undefined') ? Number(SITE_DATA_VERSION) || 1 : 1;
+  const newVersion = baseVersion + 1;
+  const data = JSON.parse(JSON.stringify(adminData));
+  return {
+    version: newVersion,
+    text: `const SITE_DATA_VERSION = ${newVersion};\nconst SITE_DATA = ${JSON.stringify(data, null, 2)};\n`
+  };
+}
+
+function initSync() {
+  const tokenInput = document.getElementById('gh-token');
+  const syncBtn = document.getElementById('btn-sync');
+  if (!tokenInput || !syncBtn) return;
+
+  // Restore saved token from a previous session
+  const savedToken = localStorage.getItem('gh_admin_token');
+  if (savedToken) tokenInput.value = savedToken;
+
+  syncBtn.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      showAdminToast('ادخل GitHub Token أولاً', 'error');
+      return;
+    }
+    localStorage.setItem('gh_admin_token', token);
+    syncBtn.disabled = true;
+    const origLabel = syncBtn.innerHTML;
+    syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الرفع…';
+
+    try {
+      const repo = 'mostafamayad/portfolio';
+      const headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+      const { version, text } = buildSiteDataJS();
+
+      // Push site-data.js
+      await pushRepoFile(repo, 'js/site-data.js', text, headers,
+        `Update site data (v${version}) from admin panel`);
+
+      // Bump cache-busting versions inside admin/index.html so browsers refetch
+      const adminHtml = await getRepoFile(repo, 'admin/index.html', headers);
+      const bumpedHtml = adminHtml.content
+        .replace(/\?v=\d+\.\d+/g, `?v=${version}.0`);
+      if (bumpedHtml !== adminHtml.content) {
+        await putRepoFile(repo, 'admin/index.html', bumpedHtml, headers, adminHtml.sha,
+          `Bump admin cache version to v${version}`);
+      }
+
+      showAdminToast('تم الرفع للـ GitHub ✔ سيظهر على كل الأجهزة خلال دقائق', 'success');
+    } catch (e) {
+      console.error('Sync failed', e);
+      showAdminToast((e && e.message) ? e.message : 'فشل المزامنة', 'error');
+    } finally {
+      syncBtn.disabled = false;
+      syncBtn.innerHTML = origLabel;
+    }
+  });
+}
+
+async function getRepoFile(repo, path, headers) {
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, { headers });
+  if (!res.ok) throw new Error('تعذر قراءة ' + path + ' من GitHub');
+  const json = await res.json();
+  const decoded = decodeURIComponent(escape(atob(json.content.replace(/\s/g, ''))));
+  return { sha: json.sha, content: decoded };
+}
+
+async function putRepoFile(repo, path, text, headers, sha, message) {
+  const content = btoa(unescape(encodeURIComponent(text)));
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, content, sha })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || ('فشل رفع ' + path));
+  }
+  return res.json();
+}
+
+async function pushRepoFile(repo, path, text, headers, message) {
+  const cur = await getRepoFile(repo, path, headers);
+  return putRepoFile(repo, path, text, headers, cur.sha, message);
 }
 
 // ── Toast ─────────────────────────────────────────────────

@@ -47,6 +47,12 @@
           <input type="file" id="import-data" accept="application/json,.json" style="display:none">
           <button class="admin-action-btn reset" id="btn-reset"><i class="fas fa-undo"></i> استعادة الأصلي</button>
           <button class="admin-action-btn logout" id="btn-logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+          <div class="admin-sync-box">
+            <label class="form-label" for="gh-token"><i class="fab fa-github"></i> GitHub Token (يُحفظ في المتصفح)</label>
+            <input type="password" class="form-input" id="gh-token" placeholder="ghp_xxx…" dir="ltr">
+            <button class="admin-action-btn sync" id="btn-sync"><i class="fas fa-cloud-upload-alt"></i> مزامنة ورفع للموقع</button>
+            <div class="admin-sync-note">يُحدّث الموقع تلقائياً فيظهر على كل الأجهزة (خلال دقائق).</div>
+          </div>
         </div>
       </aside>
 
@@ -196,8 +202,8 @@
   <!-- Toast Notification -->
   <div class="admin-toast" id="admin-toast"></div>
 
-  <script src="../js/site-data.js?v=21.0"></script>
-  <script src="../js/data.js?v=21.0"></script>
-  <script src="../js/admin.js?v=21.0"></script>
+  <script src="../js/site-data.js?v=22.0"></script>
+  <script src="../js/data.js?v=22.0"></script>
+  <script src="../js/admin.js?v=22.0"></script>
 </body>
 </html>
