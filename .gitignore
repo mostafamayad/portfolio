@@ -3,3 +3,7 @@ node_modules/
 Thumbs.db
 *.log
 .env
+
+# Embedded project folders that contain their own .git
+INVI/
+safaa/
