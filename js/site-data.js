@@ -1,4 +1,4 @@
-const SITE_DATA_VERSION = 10;
+const SITE_DATA_VERSION = 11;
 const SITE_DATA = {
   "personal": {
     "name": "Mostafa Mohamed Ayad",
