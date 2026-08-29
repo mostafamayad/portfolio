@@ -516,6 +516,8 @@ function buildPage() {
       let startTime = 0;
       let pxPerMs = 0;
       const DURATION = 28000;
+      // Multiply finger movement so dragging the marquee feels snappier.
+      const DRAG_SPEED = 2;
       const getAnim = () => {
         const list = track.getAnimations().filter(a => a.animationName === 'categories-marquee');
         return list[0] || null;
@@ -536,7 +538,7 @@ function buildPage() {
       };
       const onMove = (e) => {
         if (!dragging || !anim) return;
-        const dx = e.clientX - startX;
+        const dx = (e.clientX - startX) * DRAG_SPEED;
         const t = Math.min(Math.max(0, startTime - dx / pxPerMs), DURATION);
         anim.currentTime = t;
       };
