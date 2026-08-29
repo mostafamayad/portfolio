@@ -401,6 +401,7 @@ function populateProjects() {
           <label class="form-label">الفئة</label>
           <select class="form-input" id="proj-cat-${i}">
             <option value="social"   ${p.category==='social'   ?'selected':''}>Social Media</option>
+            <option value="thumbnail" ${p.category==='thumbnail' ?'selected':''}>Thumbnail</option>
             <option value="poster"   ${p.category==='poster'   ?'selected':''}>Poster / Print</option>
             <option value="branding" ${p.category==='branding' ?'selected':''}>Branding</option>
             <option value="web"      ${p.category==='web'      ?'selected':''}>UI / UX</option>

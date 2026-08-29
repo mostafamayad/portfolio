@@ -482,7 +482,7 @@ function buildPage() {
 
   // Categories
   document.querySelectorAll('[data-categories]').forEach(container => {
-    const catKey = {1:'branding', 2:'social', 3:'poster', 4:'web', 5:'motion', 6:'it'};
+    const catKey = {1:'branding', 2:'social', 3:'thumbnail', 4:'poster', 5:'web', 6:'motion', 7:'it'};
     const cards = DATA.categories.map(cat => {
       const cover = (DATA.projects.find(p => p.category === catKey[cat.id] && p.cover) || {}).cover || '';
       const media = cover
@@ -944,7 +944,7 @@ function showToast(message, type = '') {
 
 // ── Emoji Helpers (now Font Awesome based) ────────────────
 function getCatIcon(id) {
-  const icons = { 1:'fa-solid fa-pen-ruler', 2:'fa-solid fa-hashtag', 3:'fa-solid fa-image', 4:'fa-solid fa-code', 5:'fa-solid fa-box-open', 6:'fa-solid fa-clapperboard' };
+  const icons = { 1:'fa-solid fa-pen-ruler', 2:'fa-solid fa-hashtag', 3:'fa-solid fa-image', 4:'fa-solid fa-image', 5:'fa-solid fa-code', 6:'fa-solid fa-box-open', 7:'fa-solid fa-clapperboard' };
   return `<i class="${icons[id] || 'fa-solid fa-table-cells-large'}"></i>`;
 }
 
